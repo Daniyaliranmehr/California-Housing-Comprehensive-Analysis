@@ -19,6 +19,63 @@ def load_csv(path: str) -> pd.DataFrame:
     return pd.read_csv(path)
 
 
+def plot_correlation_heatmap(df: pd.DataFrame) -> None:
+    """
+    Plot and save the correlation heatmap of all numerical features.
+    """
+
+    corr_matrix = df.corr(numeric_only=True)
+
+    plt.figure(figsize=(10, 8))
+
+    plt.imshow(corr_matrix, cmap="coolwarm")
+
+    plt.colorbar()
+
+    plt.xticks(
+        range(len(corr_matrix.columns)),
+        corr_matrix.columns,
+        rotation=90
+    )
+
+    plt.yticks(
+        range(len(corr_matrix.columns)),
+        corr_matrix.columns
+    )
+
+    plt.tight_layout()
+
+    plt.savefig(
+        "../assets/correlation_heatmap.png",
+        dpi=300,
+        bbox_inches="tight"
+    )
+
+    plt.show()
+
+from typing import List
+import matplotlib.pyplot as plt
+import pandas as pd
+import os
+
+
+def scatter_with_target(df: pd.DataFrame, features: List[str]) -> None:
+    """
+    Plot scatter plots of multiple features against the target variable.
+    """
+    target = "median_house_value"
+
+    for col in features:
+        plt.figure(figsize=(8, 5))
+        plt.scatter(df[col], df[target], alpha=0.3)
+        plt.xlabel(col)
+        plt.ylabel(target)
+        plt.title(f"{col} vs {target}")
+        plt.tight_layout()
+        plt.savefig(os.path.join("../assets", f"{col}_vs_{target}.png"), dpi=300)
+        plt.show()
+
+
 def plot_housing_scatter(df: pd.DataFrame, color_column: str) -> None:
     """
     Plot geographic distribution of California housing dataset.
@@ -64,7 +121,7 @@ def plot_histogram(df: pd.DataFrame, column: str, bins: int = 50) -> None:
     plt.show()
 
 
-def plot_multi_histograms(df: pd.DataFrame, columns: list[str]) -> None:
+def plot_multi_histograms(df: pd.DataFrame, columns: list[str], name: str) -> None:
     """
     Plot histograms for multiple features and save the figure.
     """
@@ -98,7 +155,7 @@ def plot_multi_histograms(df: pd.DataFrame, columns: list[str]) -> None:
 
     plt.tight_layout()
 
-    plt.savefig("../assets/multi_histograms.png", dpi=300, bbox_inches="tight")
+    plt.savefig(f"../assets/{name}.png", dpi=300, bbox_inches="tight")
 
     plt.show()
 
@@ -119,7 +176,7 @@ def plot_boxplot(df: pd.DataFrame, column: str) -> None:
     plt.show()
 
 
-def plot_multi_boxplots(df: pd.DataFrame, columns: list[str]) -> None:
+def plot_multi_boxplots(df: pd.DataFrame, columns: list[str], name: str) -> None:
     """
     Plot boxplots for multiple features and save the figure.
     """
@@ -152,6 +209,6 @@ def plot_multi_boxplots(df: pd.DataFrame, columns: list[str]) -> None:
 
     plt.tight_layout()
 
-    plt.savefig("../assets/multi_boxplots.png", dpi=300, bbox_inches="tight")
+    plt.savefig(f"../assets/{name}.png", dpi=300, bbox_inches="tight")
 
     plt.show()

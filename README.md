@@ -7,18 +7,76 @@ This project presents an end-to-end experimental analysis of the California Hous
 
 ...
 
-## Dataset
+## Project Structure
+
+...
+
+## File Descriptions
+
+...
+
+
+## Data Analysis and Preparation
+
+To gain a better understanding of the dataset, I will analyze various aspects of the data and prepare it for model training.
+
+This section includes the following subsections:
+
+1. **Data Understanding**
+
+      1. Dataset structure
+
+      2. Initial Statistical Insights
+
+      3. Missing Values 
+
+2. **Exploratory Data Analysis (EDA)**
+
+      1. Univariate Analysis
+
+      2. Correlation Analysis
+
+      3. Bivariate Analysis
+
+      4. Geographic Visualization
+
+
+3. **Data Cleaning & Feature Engineering**
+
+    1. Data Cleaning
+
+    2. Feature Engineering
+
+    3. Encoding
+
+    4. Transformation
+
+4. **Feature Selection & Validation**
+
+    1. Correlation after Feature Engineering
+
+    2. Feature usefulness evaluation
+
+    3. redundancy check
+
+    4. feature pruning
+---
+
+### 1. Data Understanding
+Initial exploration of the dataset to understand its structure, feature types, missing values, and basic statistical properties. This step provides a foundational understanding of the data before performing deeper analysis and preprocessing.
+
+#### 1. Dataset Structure
 
 The dataset used in this project is the California Housing dataset, which contains information about housing blocks in California based on the 1990 census.
 It includes multiple geographic and housing features that can help predict median house values.
 
-### Dataset Information
+#### Dataset Information
 - **Number of instances:** 20,640
 - **Number of features:** 10
 - **Target variable:** `median_house_value`
 - **Task type:** Regression
 
-### Features
+#### Features
 
 | Feature | Description |
 |----------|-------------|
@@ -33,64 +91,15 @@ It includes multiple geographic and housing features that can help predict media
 | `ocean_proximity` | Proximity of the district to the ocean |
 | `median_house_value` | Median house value in the district (target variable) |
 
-### Target Variable
+#### Target Variable
 
 | Target | Description |
 |----------|-------------|
 | `median_house_value` | Median house value in USD for a given district |
 
-## Project Structure
-
-...
-
-## File Descriptions
-
-...
 
 
-## Data Prepartion and Analysis
-
-### Geographic Visualization
-Visualize California housing locations using latitude and longitude.
-
-<p align="center">
-  <img src="assets/california-satellite.png" width="100%">
-</p>
-
-Two different color encodings are used:
-- Median House Value (target variable)
-- Median Income (important feature)
-
-#### 1. Colored by House Price
-
-This plot shows how housing prices vary across California geographically.
-
-<p align="center">
-  <img src="assets/median_house_value_scatter.png" width="100%">
-</p>
-
-#### 2. Colored by Income
-
-This plot shows the relationship between income distribution and location.
-
-<p align="center">
-  <img src="assets/median_income_scatter.png" width="100%">
-</p>
-
-> Key Observations:
-> - Coastal areas tend to have higher house prices
-> - Higher income regions align with expensive housing areas
-> - Location is a critical predictive feature
-
----
-
-### Missing Values
-
-- Total missing values: 207 (all in the `total_bedrooms` column)
-
----
-
-### Initial Statistical Insights
+#### 2. Initial Statistical Insights
 
 1. Population
     - mean = 1425
@@ -107,15 +116,21 @@ This plot shows the relationship between income distribution and location.
 > #### Key Findings:
 > Large gaps between mean and maximum values in several features suggest the presence of skewed distributions and potential extreme values.
 
----
+#### 3. Missing Values
 
-### Distribution and Outlier Validation
+- Total missing values: 207 (all in the `total_bedrooms` column)
+
+
+### 2. Exploratory Data Analysis (EDA)
+Comprehensive exploratory analysis was performed to examine feature distributions, relationships, and data patterns. Initial attention was given to `population`, `total_rooms`, and `median_income` due to suspected skewness or extreme values, using **histograms**, **boxplots**, and **IQR analysis** where needed. Similar checks were then applied to the remaining features to ensure a thorough understanding of the dataset.
+
+### 1. Univariate Analysis
 
 In this section, I validate initial assumptions using visual and statistical methods such as histograms, boxplots, and IQR analysis.
 
-### 1. Population
+### 1.1. Population
 
-#### 1.1. Histogram
+#### Histogram
 
 The histogram illustrates the distribution of the `population` feature across different districts within the California Housing dataset.
 
@@ -130,7 +145,7 @@ The histogram illustrates the distribution of the `population` feature across di
 > #### Modeling Implications:
 > Highly skewed features can adversely affect the optimization process of deep learning architectures by distorting loss functions and causing unstable gradient updates during backpropagation.
 
-#### 1.2. Boxplot
+#### Boxplot
 
 The boxplot for the `population` feature corroborates the findings from the histogram, providing a clear statistical visualization of the data's dispersion and extreme values.
 
@@ -146,13 +161,13 @@ The boxplot for the `population` feature corroborates the findings from the hist
 > #### Modeling Implications:
 > In the context of deep learning pipelines, these extreme outliers are highly problematic. They can disproportionately influence the loss function and lead to vanishing or exploding gradients during backpropagation.
 
-#### 1.3. IQR
+#### IQR
 
 To systematically identify and mitigate the impact of extreme values, I employed the Interquartile Range (IQR) method. This approach provides a robust framework for detecting outliers that lie significantly beyond the normal distribution of the structural features.
 
 #### Methodology:
 * **IQR Calculation:** Defined as the difference between the 75th percentile (Q3) and the 25th percentile (Q1).
-* **Boundaries:** We established the upper threshold for "normal" data using the standard Tukey's fence formula: `Upper Bound = Q3 + (1.5 * IQR)`.
+* **Boundaries:** I established the upper threshold for "normal" data using the standard Tukey's fence formula: `Upper Bound = Q3 + (1.5 * IQR)`.
 * **Outlier Detection:** Data points exceeding this threshold are flagged as extreme outliers, which are indicative of unusually high-density residential districts.
 
 > #### Key Findings:
@@ -160,9 +175,9 @@ To systematically identify and mitigate the impact of extreme values, I employed
 >
 > * **Impact Analysis:** A significant portion of the dataset falls beyond this upper bound. These extreme values are not necessarily errors, but rather represent densely populated districts that require special handling to prevent them from disproportionately biasing the neural network's gradient updates during training.
 
-### 2. Total Rooms
+### 1.2. Total Rooms
 
-#### 2.1. Histogram
+#### Histogram
 
 The histogram illustrates the distribution of the `total_rooms` feature across different districts within the California Housing dataset. 
 
@@ -180,7 +195,7 @@ The histogram illustrates the distribution of the `total_rooms` feature across d
 > #### Modeling Implications:
 > Highly skewed features can adversely affect the optimization process of deep learning architectures by distorting loss functions and causing unstable gradient updates during backpropagation.
 
-#### 2.2. Boxplot
+#### Boxplot
 
 The boxplot for the `total_rooms` feature strongly aligns with its corresponding histogram, highlighting a severe positive skew and a massive presence of extreme values.
 
@@ -198,9 +213,9 @@ The boxplot for the `total_rooms` feature strongly aligns with its corresponding
 > #### Modeling Implications:
 > Feeding these extreme, unscaled outliers directly into a neural network can cause severe gradient instability during backpropagation.
 
-#### 3. Median Income
+#### 1.3. Median Income
 
-#### 3.1. Histogram
+#### Histogram
 
 The histogram illustrates the distribution of the `median_income` feature across different districts within the California Housing dataset. Note that the x-axis values represent tens of thousands of US Dollars (e.g., a value of 3 indicates $30,000).
 
@@ -216,7 +231,7 @@ The histogram illustrates the distribution of the `median_income` feature across
 > #### Modeling Implications:
 > While the relatively symmetric distribution of this feature is highly favorable for neural network optimization, the artificial cap at 15.0 introduces a sharp data discontinuity. Deep learning models might struggle to accurately map gradients for these capped districts because the true income variance is lost.
 
-#### 3.2. Boxplot
+#### Boxplot
 
 The boxplot for the `median_income` feature provides a distinct contrast to the highly skewed structural features, while also visually confirming the artificial capping observed in the histogram.
 
@@ -234,23 +249,468 @@ The boxplot for the `median_income` feature provides a distinct contrast to the 
 > #### Modeling Implications:
 > The core distribution of this feature is highly suitable for neural network processing. However, the artificial cap at 15.0 creates a stark boundary that can confuse optimization algorithms.
 
-*To understand the behavior of the data, the histograms of the remaining features **(Housing Median Age, Total Bedrooms, Households, Median House Value)** were also examined.*
+#### 1.4. Other Featrues
+To understand the behavior of the data, the histograms of the remaining features **(Housing Median Age, Total Bedrooms, Households, Median House Value)** were also examined.
 
 
 <p align="center">
-  <img src="assets/multi_histograms.png" width="100%">
+  <img src="assets/histograms-2.1.png" width="100%">
 </p>
 
+> Key Ovservations:
+>
 > **housing_median_age:** Shows an artificial spike at 52 years, indicating the data was capped during collection.
-
+>
 > **total_bedrooms:** Exhibits a strong right skew with a long tail of extreme values.
-
+>
 > **households:** Strongly correlated with the population feature, this demographic variable exhibits a heavy right skew.
-
+>
 > **median_house_value:** Displays a relatively normal distribution but features a massive artificial spike at $500,000. This indicates a strict cap on property values during data collection.
 
-Among the four analyzed features, the boxplot for `housing_median_age` showed no statistical outliers and required no treatment, whereas the boxplots for `total_bedrooms`, `households`, and `median_house_value` all revealed significant outlier issues.
+<p align="center">
+  <img src="assets/boxplots-2.1.png" width="100%">
+</p>
+
+> Key Ovservations:
+>
+> Among the four analyzed features, the boxplot for `housing_median_age` showed no statistical outliers and required no treatment, whereas the boxplots for `total_bedrooms`, `households`, and `median_house_value` all revealed significant outlier issues.
+
+### 2. Correlation Analysis
+
+To understand the relationship between features and the target variable (`median_house_value`), a correlation matrix was computed.
+
+Heatmap: 
+<p align="center">
+  <img src="assets/correlation_heatmap.png" width="100%">
+</p>
+
+Feature Correlation with Target: 
+
+| Feature               | Correlation with Median House Value |
+|----------------------|:------------------------------------:|
+| median_house_value    | 1.000                              |
+| median_income         | 0.688                              |
+| total_rooms           | 0.134                              |
+| housing_median_age    | 0.106                              |
+| households            | 0.066                              |
+| total_bedrooms        | 0.050                              |
+| population            | -0.025                             |
+| longitude             | -0.046                             |
+| latitude              | -0.144                             |
+
+> Key Observations
+> - `median_income` shows the strongest positive correlation with house prices, indicating that income level is the most influential factor in determining housing value.
+>
+> - Features such as `total_rooms` and `housing_median_age` show weak positive correlations, suggesting limited standalone predictive power.
+>
+> - Geographic features like `latitude` and `longitude` exhibit weak or slightly negative correlations, implying that location alone does not linearly explain house prices.
+>
+> - Several features have near-zero correlation with the target, meaning they do not have a strong linear relationship with housing value.
+
+### Important Note
+
+Correlation measures only linear relationships. Therefore, non-linear dependencies and feature interactions are not captured in this analysis.
+
+### 3. Bivariate Analysis
+
+Scatter plots were evaluated against the target variable (`median_house_value`) to understand feature relationships and data artifacts before training the deep learning model:
 
 <p align="center">
-  <img src="assets/multi_boxplots.png" width="100%">
+  <img src="assets/median_income_vs_median_house_value.png" width="100%">
 </p>
+
+> * **median_income:** Shows a strong, positive linear correlation, making it the most critical predictor for the network. The plot clearly captures the horizontal artificial cap at $500,000 and a vertical cap at 15.
+
+<p align="center">
+  <img src="assets/population_vs_median_house_value.png" width="100%">
+</p>
+
+> * **population:** Mirrors the pattern of total rooms. Most data points are compressed in the lower range, showing extreme right-side outliers (massive districts) and no standalone linear correlation to property values.
+
+<p align="center">
+  <img src="assets/total_rooms_vs_median_house_value.png" width="100%">
+</p>
+
+> * **total_rooms:** No direct linear relationship with house values. Points are heavily clustered below 5,000 rooms, with extreme outliers stretching up to 40,000 rooms. The $500,000 price cap remains visible across all room counts.
+
+<p align="center">
+  <img src="assets/total_bedrooms_vs_median_house_value.png" width="100%">
+</p>
+
+> * **total_bedrooms:** Displays a dense cluster at the lower range with a long tail of extreme outliers. The lack of a direct linear trend confirms that raw regional bedroom counts require transformation into ratios.
+
+<p align="center">
+  <img src="assets/households_vs_median_house_value.png" width="100%">
+</p>
+
+> * **households:** Follows the exact same distribution as population and room counts. Highly compressed on the lower end, proving that raw household metrics need proper scaling to stabilize network gradients.
+
+### 4. Geographic Visualization
+Visual exploration of geographical patterns in the dataset using latitude and longitude to understand spatial relationships in housing prices.
+
+<p align="center">
+  <img src="assets/california-satellite.png" width="100%">
+</p>
+
+Two different color encodings are used:
+- Median House Value (target variable)
+- Median Income (important feature)
+
+#### Colored by Median House Value
+
+This plot shows how housing prices vary across California geographically.
+
+<p align="center">
+  <img src="assets/median_house_value_scatter.png" width="100%">
+</p>
+
+#### Colored by Median Income
+
+This plot shows the relationship between income distribution and location.
+
+<p align="center">
+  <img src="assets/median_income_scatter.png" width="100%">
+</p>
+
+> Key Observations:
+> - Coastal areas tend to have higher house prices
+> - Higher income regions align with expensive housing areas
+> - Location is a critical predictive feature
+
+---
+
+### 3. Data Cleaning & Feature Engineering
+This stage focuses on preparing the dataset for deep learning model. Missing values are handled to improve data quality, while new features are engineered from existing variables to capture more meaningful relationships within the data. These transformations aim to enhance the dataset's predictive power and provide better inputs for model training.
+
+### 1. Data Cleaning
+
+### 1.1 Handling Missing Values
+
+Before training the model, it is important to address the missing values in the dataset.
+
+The `total_bedrooms` feature contains **207 missing values** out of **20,640 samples**:
+
+$$
+\frac{207}{20640} \times 100 \approx 1.0\%
+$$
+
+Therefore, only about **1% of the dataset is incomplete**.
+
+Several approaches can be used to handle missing values:
+
+#### Dropping Missing Records
+
+This approach removes all rows containing missing values.
+
+**Advantages**
+
+* Simple and easy to implement.
+* Does not introduce artificial values into the dataset.
+
+**Disadvantages**
+
+* Results in data loss.
+
+> Since only about 1% of the records contain missing values, dropping these rows could be considered a reasonable option.
+
+
+#### Mean Imputation
+
+In this method, missing values are replaced with the mean of the feature.
+
+**Advantages**
+
+* Preserves all records in the dataset.
+* Easy to implement.
+
+**Disadvantages**
+
+* Can be affected by outliers.
+* May slightly distort the original distribution of the data.
+
+#### Median Imputation
+
+In this method, missing values are replaced with the median of the feature.
+
+**Advantages**
+
+* Robust to outliers.
+* Better suited for skewed distributions.
+
+**Disadvantages**
+
+* May not fully preserve relationships between features.
+
+> As shown in Section 2.1.4, the `total_bedrooms` feature has a right-skewed distribution and contains outliers. Since the median is less sensitive to extreme values than the mean, it provides a more reliable estimate of the typical number of bedrooms and is therefore a better choice for this feature.
+
+
+#### Model-Based Imputation
+
+Missing values can also be predicted using a machine learning model trained on the remaining features.
+
+**Advantages**
+
+* Potentially more accurate than simple statistical methods.
+* Can preserve complex relationships within the data.
+
+**Disadvantages**
+
+* More computationally expensive.
+* Increases the complexity of the preprocessing pipeline.
+
+> Although this is a powerful technique, it is unnecessary for this project given the very small proportion of missing values.
+
+### Selected Approach
+
+For this project, **median imputation** will be used to handle missing values in the `total_bedrooms` feature. This choice is justified by the presence of outliers and the right-skewed distribution of the data, making the median a more robust and representative measure than the mean.
+
+---
+
+### 1.2 Outlier Decision
+
+During the section 2.1, several features were found to contain extreme values significantly larger than their typical observations. Histograms, boxplots, and IQR analysis revealed the presence of outliers in the following features:
+
+* population
+* total_rooms
+* total_bedrooms
+* households
+* median_income
+* median_house_value
+
+However, the presence of outliers does not necessarily imply data quality issues. Therefore, before applying any treatment, it is important to determine whether these values represent measurement errors or valid observations.
+
+#### Removing Outliers
+
+This approach removes observations that exceed a predefined threshold, such as the IQR upper bound.
+
+**Advantages**
+
+* Reduces the influence of extreme values.
+* Can improve model stability for certain algorithms.
+
+**Disadvantages**
+
+* Results in data loss.
+* May remove valid and informative observations.
+
+> In the California Housing dataset, many extreme values correspond to highly populated districts or large residential areas. Therefore, removing these observations may discard valuable information about the housing market.
+
+#### Capping Outliers (Winsorization)
+
+In this method, values above a specified threshold are replaced with the threshold itself.
+
+**Advantages**
+
+* Reduces the impact of extreme observations.
+* Preserves the number of records.
+
+**Disadvantages**
+
+* Alters the original data distribution.
+* May hide meaningful variations present in the data.
+
+#### Keeping Outliers Unchanged
+
+This approach retains all observations without modification.
+
+**Advantages**
+
+* Preserves the original dataset.
+* Maintains potentially valuable information contained in rare observations.
+
+**Disadvantages**
+
+* Extreme values may increase skewness and affect model training.
+
+> For this dataset, most outliers appear to be genuine observations rather than data entry errors. As a result, retaining these records is a reasonable option.
+
+#### Transforming Skewed Features
+
+Instead of removing outliers, skewed features can be transformed using techniques such as logarithmic transformation.
+
+**Advantages**
+
+* Reduces the influence of extreme values.
+* Preserves all observations.
+* Often produces a more balanced distribution.
+
+**Disadvantages**
+
+* Changes the scale and interpretation of the feature values.
+
+> This approach is particularly suitable for features such as population, total_rooms, total_bedrooms, and households, which exhibit strong right-skewed distributions.
+
+### Selected Approach
+
+For this project, no outliers will be removed from the dataset. The identified extreme values appear to represent legitimate districts rather than measurement errors. To preserve valuable information while reducing the impact of skewed distributions, the affected features will be transformed in a later preprocessing stage using **logarithmic transformation**.
+
+---
+
+### Population Log Transformation
+
+Apply logarithmic transformation to reduce the strong positive skewness observed in the `population` feature.
+
+#### Distribution Analysis
+
+The transformed feature (`population_log`) exhibited a noticeably more symmetric distribution compared to the original feature. The long right tail present in the original histogram was substantially compressed, resulting in a distribution closer to normality.
+
+<p align="center">
+  <img src="assets/histograms-population-3.1.png" width="100%">
+</p>
+
+#### Outlier Analysis
+
+Although outliers remained visible in the boxplot after transformation, their influence was significantly reduced. This behavior is expected, as logarithmic transformation is designed to lessen the impact of extreme values rather than eliminate them entirely.
+
+<p align="center">
+  <img src="assets/boxplots-population-3.1.png" width="100%">
+</p>
+
+#### Correlation Analysis
+
+The correlation with the target variable (`median_house_value`) changed only marginally:
+
+| Feature        | Correlation |
+| -------------- | ----------: |
+| population     |   -0.024650 |
+| population_log |   -0.021205 |
+
+The transformation did not provide a meaningful improvement in predictive correlation.
+
+> **Decision:**
+>
+> The logarithmic transformation on `population` is highly effective for distribution balancing. While the direct linear correlation with `median_house_value` remained largely unchanged, the transformation successfully eliminated extreme positive skewness and compressed heavy-tailed outliers without losing data integrity. This balanced distribution is vital for stabilizing gradient updates and preventing regional scale variances from dominating neural network weights. Therefore, the transformed feature (`population_log`) will be retained as a core input to optimize deep learning model training.
+
+### Total Rooms Log Transformation
+
+Apply logarithmic transformation to reduce the strong positive skewness observed in the `total_rooms` feature.
+
+#### Distribution Analysis
+
+The transformed feature (`total_rooms_log`) exhibited a noticeably more symmetric distribution compared to the original feature. The long right tail present in the original histogram was substantially compressed, resulting in a distribution closer to normality and more suitable for neural network training.
+
+<p align="center">
+  <img src="assets/histograms-total_rooms-3.1.png" width="100%">
+</p>
+
+#### Outlier Analysis
+
+The raw `total_rooms` boxplot displayed a massive string of extreme outliers reaching up to 40,000 rooms, which could cause unstable gradient updates during backpropagation. Following the logarithmic transformation, although statistical outliers remain visible, their numerical scale is tightly bounded between approximately 1 and 11. This compression successfully mitigates the leverage of extreme values without removing any historical data points.
+
+<p align="center">
+  <img src="assets/boxplots-total_rooms-3.1.png" width="100%">
+</p>
+
+#### Correlation Analysis
+
+The correlation with the target variable (`median_house_value`) showed a positive improvement:
+
+| Feature         | Correlation |
+| --------------- | ----------: |
+| total_rooms     |    0.134153 |
+| total_rooms_log |    0.159422 |
+
+The transformation helped linearize the underlying relationship, providing a meaningful gain in direct predictive correlation with the target.
+
+> **Decision:**
+>
+> The logarithmic transformation on `total_rooms` successfully reduced skewness, compressed the scale of extreme outliers, and improved the linear correlation with `median_house_value`. Therefore, the transformed feature (`total_rooms_log`) will be retained as a key input for the deep learning model.
+
+
+### Total Bedrooms Log Transformation
+
+Apply logarithmic transformation to reduce the strong positive skewness observed in the `total_bedrooms` feature.
+
+#### Distribution Analysis
+
+The transformed feature (`total_bedrooms_log`) exhibited a highly symmetric, bell-shaped distribution compared to the original raw feature. The extreme right skewness present in the original histogram was successfully compressed, resulting in a stable distribution closer to normality that is significantly more effective for neural network weight stabilization and uniform feature optimization.
+
+<p align="center">
+  <img src="assets/histograms-total_bedrooms-3.1.png" width="100%">
+</p>
+
+#### Outlier Analysis
+
+The raw `total_bedrooms` boxplot showed an extensive tail of extreme outliers reaching up to 6,000 bedrooms, which poses a risk of introducing massive scale variance during gradient descent calculations. Following the logarithmic transformation, while statistical outliers remain present on both tails due to the sample size, their operational scale is tightly bounded within a compact range between approximately 1 and 9. This mathematical compression mitigates the adverse leverage of extreme values without dropping valid data points.
+
+<p align="center">
+  <img src="assets/boxplots-total_bedrooms-3.1.png" width="100%">
+</p>
+
+#### Correlation Analysis
+
+The correlation with the target variable (`median_house_value`) showed a marginal but positive directional improvement:
+
+| Feature            | Correlation |
+| ------------------ | ----------: |
+| total_bedrooms     |    0.049457 |
+| total_bedrooms_log |    0.053059 |
+
+The transformation slightly enhanced the linear relationship with the target variable, indicating a cleaner predictive signal.
+
+> **Decision:**
+>
+> The logarithmic transformation on `total_bedrooms` is highly beneficial for neural network processing. It successfully resolved the extreme right skewness, compressed heavy-tailed outliers into a manageable range, and improved the direct correlation with `median_house_value`. Therefore, the transformed feature (`total_bedrooms_log`) will be retained as a core input for the deep learning model pipeline.
+
+
+### Households Log Transformation
+
+Apply logarithmic transformation to reduce the strong positive skewness observed in the `households` feature.
+
+#### Distribution Analysis
+
+The corrected distribution plots demonstrate a significant structural improvement. The original `households` feature displays a heavy right-tail skewness, concentrating most data points at lower values while dense sectors pull the distribution. Following the logarithmic transformation, `households_log` displays a highly symmetric, bell-shaped Gaussian-like distribution. This structural transformation is crucial for deep learning architectures, ensuring dense continuous layers process features without geographic scale bias.
+
+<p align="center">
+  <img src="assets/histograms-households-3.1.png" width="100%">
+</p>
+
+#### Outlier Analysis
+
+The baseline boxplot highlights a massive sequence of extreme statistical outliers extending beyond 6,000 households. Such immense values introduce heavy scale variance, risking gradient instability during backpropagation. After applying the `log1p` transformation, the overall feature range is mathematically compressed and bounded within a stable scale between approximately 1 and 9. While statistical outliers remain visible due to data density, their numeric leverage is entirely neutralized, safeguarding the gradient descent process from exploding updates.
+
+<p align="center">
+  <img src="assets/boxplots-households-3.1.png" width="100%">
+</p>
+
+#### Correlation Analysis
+
+The mathematical transformation yielded a direct positive improvement in linear correlation with the target variable (`median_house_value`):
+
+| Feature        | Correlation |
+| -------------- | ----------: |
+| households     |    0.065843 |
+| households_log |    0.073612 |
+
+By converting the exponential scaling into a linear representation, the transformation uncovered a cleaner, stronger predictive signal for the deep learning model.
+
+> **Decision:**
+>
+> The logarithmic transformation on `households` is highly effective and structurally necessary. It successfully eliminates the heavy right skewness, compresses extreme outlier leverage into a well-bounded operational scale, and improves linear interpretability with `median_house_value`. Therefore, the transformed feature (`households_log`) will be officially retained in the deep learning preprocessing pipeline.
+
+### 3.2. Feature Engineering
+
+The original dataset contains several raw count-based variables such as total_rooms, total_bedrooms, population, and households. While these features provide useful information, they do not fully capture the underlying characteristics of a district.
+
+To create more informative predictors, ratio-based features were engineered:
+
+* `rooms_per_household` measures the average number of rooms available per household, providing a better indication of housing capacity and living space.
+
+* `bedrooms_per_room` measures the proportion of bedrooms relative to the total number of rooms, helping distinguish between compact residential areas and larger properties with additional living spaces.
+
+* `population_per_household` estimates the average household size, capturing demographic density that may influence housing prices.
+
+These engineered features aim to represent more meaningful real-world relationships than the original raw counts.
+
+|Feature| Correlation with Target |
+|----------|:----------:|
+| rooms_per_household | 0.152 |
+| bedrooms_per_room | -0.256 |
+| population_per_household | -0.024 |
+
+> Key Findings:
+> - `rooms_per_household` provides slightly stronger predictive information than the raw `total_rooms` feature.
+>
+> - `bedrooms_per_room` shows the strongest engineered relationship with housing prices, suggesting that districts with a lower proportion of bedrooms tend to have higher-valued properties.
+>
+> - `population_per_household` exhibits a weak linear relationship with the target, although it may still contribute useful non-linear information during model training.
