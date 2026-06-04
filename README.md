@@ -30,6 +30,7 @@ This section includes the following subsections:
 
       3. Missing Values 
 
+
 2. **Exploratory Data Analysis (EDA)**
 
       1. Univariate Analysis
@@ -47,22 +48,15 @@ This section includes the following subsections:
 
     2. Feature Engineering
 
-    3. Encoding
+    3. Skewness Treatment
 
-    4. Transformation
+    4. Encoding
+    
+    5. Feature Scaling
 
-4. **Feature Selection & Validation**
-
-    1. Correlation after Feature Engineering
-
-    2. Feature usefulness evaluation
-
-    3. redundancy check
-
-    4. feature pruning
 ---
 
-### 1. Data Understanding
+## 1. Data Understanding
 Initial exploration of the dataset to understand its structure, feature types, missing values, and basic statistical properties. This step provides a foundational understanding of the data before performing deeper analysis and preprocessing.
 
 #### 1. Dataset Structure
@@ -121,7 +115,7 @@ It includes multiple geographic and housing features that can help predict media
 - Total missing values: 207 (all in the `total_bedrooms` column)
 
 
-### 2. Exploratory Data Analysis (EDA)
+## 2. Exploratory Data Analysis (EDA)
 Comprehensive exploratory analysis was performed to examine feature distributions, relationships, and data patterns. Initial attention was given to `population`, `total_rooms`, and `median_income` due to suspected skewness or extreme values, using **histograms**, **boxplots**, and **IQR analysis** where needed. Similar checks were then applied to the remaining features to ensure a thorough understanding of the dataset.
 
 ### 1. Univariate Analysis
@@ -379,7 +373,8 @@ This plot shows the relationship between income distribution and location.
 
 ---
 
-### 3. Data Cleaning & Feature Engineering
+## 3. Data Preparation
+
 This stage focuses on preparing the dataset for deep learning model. Missing values are handled to improve data quality, while new features are engineered from existing variables to capture more meaningful relationships within the data. These transformations aim to enhance the dataset's predictive power and provide better inputs for model training.
 
 ### 1. Data Cleaning
@@ -546,7 +541,64 @@ For this project, no outliers will be removed from the dataset. The identified e
 
 ---
 
-### Population Log Transformation
+### 2. Feature Engineering
+
+The original dataset gives us total counts like `total_rooms` and `population`. While helpful, these numbers mostly just tell us how large a district is. A huge district will naturally have more rooms, but that does not mean the houses there are more expensive. 
+
+To help the models understand the actual living conditions, like home sizes and neighborhood density, I engineered three ratio-based features. I then analyzed their histograms and boxplots to see how the data is actually shaped.
+
+#### New Features Analysis
+
+#### Histograms:
+
+<p align="center">
+  <img src="assets/histograms_engineered_features.png" width="100%">
+</p>
+
+#### Boxplots:
+
+<p align="center">
+  <img src="assets/boxplots_engineered_features.png" width="100%">
+</p>
+
+#### Correaltions:
+
+| Feature | Correlation with Target |
+| :--- | :---: |
+| `rooms_per_household` | 0.151948 |
+| `bedrooms_per_room` | -0.233303 |
+| `population_per_household` | -0.023737 |
+| `total_rooms` | 0.134153 |
+| `households` | 0.065843 |
+| `total_bedrooms` | 0.049457 |
+| `population` | -0.024650 |
+
+
+
+> **`bedrooms_per_room` (The Strongest Signal):**
+  Looking at both the histogram and boxplot, this feature has the healthiest and most balanced distribution. Most of the data falls neatly between 0.1 and 0.3. It also has the strongest correlation with our target (-0.233), showing clearly that houses with a higher percentage of bedrooms (meaning less common living space) tend to be cheaper. However, the plots reveal a few impossible data points reaching up to 3.0. Logically, a house cannot have more bedrooms than total rooms, meaning these are data entry errors.
+>
+> **`rooms_per_household` (Good Signal, Heavy Skew):**
+  The visuals show a massive right skew. The histogram is mostly packed on the far left, and the boxplot reveals a long tail of extreme outliers stretching past 140 rooms per household. Despite this messy shape, it still correlates better with house prices (+0.151) than the raw `total_rooms` feature. It holds a great predictive signal but needs serious cleaning to remove those extreme anomalies.
+>
+> **`population_per_household` (Extremely Noisy):**
+  Visually, this feature looks broken. The histogram is basically a single tall bar, and the boxplot is completely flattened against the zero line because of crazy outliers reaching up to 1200 people in a single household. This extreme noise completely ruins its linear correlation (-0.023). Still, it contains valuable neighborhood density information once we filter out the errors.
+
+### 2. Preprocessing Steps for Neural Network
+
+Because neural networks are sensitive to heavy skewness and unscaled outliers, we cannot feed these engineered features directly into the model. Based on our visual analysis, I will apply the following preprocessing pipeline:
+
+1. **Cap `bedrooms_per_room` at 1.0:** This fixes the logical errors in the dataset. Anything above 1.0 will be clipped to 1.0, ensuring clean and realistic data.
+2. **Cap and Log-Transform `rooms_per_household`:** I will set a realistic upper limit (like 10 or 15 rooms) to remove the extreme outliers, and then apply a log transformation to fix the right-skewness and create a more bell-shaped curve.
+3. **Strict Capping for `population_per_household`:** I will cap this feature at the 99th percentile to drop the impossible household sizes, followed by a log transformation so the neural network can actually learn from the underlying density patterns.
+
+---
+### 3. Feature Transformation
+Since deep learning models (especially neural networks) perform best when features are normally distributed and scales are bounded, I implemented a comprehensive transformation pipeline for both raw and engineered features.
+
+### Raw Features
+
+### 1. Population Log Transformation
 
 Apply logarithmic transformation to reduce the strong positive skewness observed in the `population` feature.
 
@@ -581,7 +633,7 @@ The transformation did not provide a meaningful improvement in predictive correl
 >
 > The logarithmic transformation on `population` is highly effective for distribution balancing. While the direct linear correlation with `median_house_value` remained largely unchanged, the transformation successfully eliminated extreme positive skewness and compressed heavy-tailed outliers without losing data integrity. This balanced distribution is vital for stabilizing gradient updates and preventing regional scale variances from dominating neural network weights. Therefore, the transformed feature (`population_log`) will be retained as a core input to optimize deep learning model training.
 
-### Total Rooms Log Transformation
+### 2. Total Rooms Log Transformation
 
 Apply logarithmic transformation to reduce the strong positive skewness observed in the `total_rooms` feature.
 
@@ -617,7 +669,7 @@ The transformation helped linearize the underlying relationship, providing a mea
 > The logarithmic transformation on `total_rooms` successfully reduced skewness, compressed the scale of extreme outliers, and improved the linear correlation with `median_house_value`. Therefore, the transformed feature (`total_rooms_log`) will be retained as a key input for the deep learning model.
 
 
-### Total Bedrooms Log Transformation
+### 3. Total Bedrooms Log Transformation
 
 Apply logarithmic transformation to reduce the strong positive skewness observed in the `total_bedrooms` feature.
 
@@ -653,7 +705,7 @@ The transformation slightly enhanced the linear relationship with the target var
 > The logarithmic transformation on `total_bedrooms` is highly beneficial for neural network processing. It successfully resolved the extreme right skewness, compressed heavy-tailed outliers into a manageable range, and improved the direct correlation with `median_house_value`. Therefore, the transformed feature (`total_bedrooms_log`) will be retained as a core input for the deep learning model pipeline.
 
 
-### Households Log Transformation
+### 4. Households Log Transformation
 
 Apply logarithmic transformation to reduce the strong positive skewness observed in the `households` feature.
 
@@ -688,29 +740,115 @@ By converting the exponential scaling into a linear representation, the transfor
 >
 > The logarithmic transformation on `households` is highly effective and structurally necessary. It successfully eliminates the heavy right skewness, compresses extreme outlier leverage into a well-bounded operational scale, and improves linear interpretability with `median_house_value`. Therefore, the transformed feature (`households_log`) will be officially retained in the deep learning preprocessing pipeline.
 
-### 3.2. Feature Engineering
 
-The original dataset contains several raw count-based variables such as total_rooms, total_bedrooms, population, and households. While these features provide useful information, they do not fully capture the underlying characteristics of a district.
+### Engineered Features
 
-To create more informative predictors, ratio-based features were engineered:
+### 1. Bedrooms Per Room
 
-* `rooms_per_household` measures the average number of rooms available per household, providing a better indication of housing capacity and living space.
+Apply outlier clipping to eliminate impossible logical errors where the proportion of bedrooms exceeds the total room count.
 
-* `bedrooms_per_room` measures the proportion of bedrooms relative to the total number of rooms, helping distinguish between compact residential areas and larger properties with additional living spaces.
+#### Distribution Analysis
 
-* `population_per_household` estimates the average household size, capturing demographic density that may influence housing prices.
+The empirical distribution plots reveal a highly sound structure for the main body of the data. The engineered `bedrooms_per_room` feature naturally concentrates around 0.2, representing a realistic and healthy ratio for residential real estate layouts. Unlike other count-based variables, this ratio does not suffer from extreme exponential right-skewness and displays a reasonably symmetric profile. Therefore, a logarithmic transformation is unnecessary. However, the original unclipped tail extended to impossible values near 3.0, representing severe data corruption. This required strict clipping to protect the dense continuous layers in our deep learning architecture.
 
-These engineered features aim to represent more meaningful real-world relationships than the original raw counts.
+<p align="center">
+  <img src="assets/bedrooms_per_room_histrogram.png" width="100%">
+</p>
 
-|Feature| Correlation with Target |
-|----------|:----------:|
-| rooms_per_household | 0.152 |
-| bedrooms_per_room | -0.256 |
-| population_per_household | -0.024 |
+#### Outlier Analysis
 
-> Key Findings:
-> - `rooms_per_household` provides slightly stronger predictive information than the raw `total_rooms` feature.
+The baseline boxplot highlighted a distinct set of extreme statistical anomalies stretching well beyond the logical ceiling of 1.0. Structurally, a house cannot contain more bedrooms than total rooms. These points are clear indicators of data entry errors. By applying a hard clip at 1.0, these extreme anomalies are completely neutralized. As seen in the updated visual, the feature space is successfully bounded within a strict 0 to 1 operational scale. This prevents corrupted gradients from introducing noise during backpropagation.
+
+<p align="center">
+  <img src="assets/bedrooms_per_room_boxplot.png" width="100%">
+</p>
+
+#### Correlation Analysis
+
+Even prior to transformation, this engineered ratio uncovers the strongest negative linear relationship with the target variable (`median_house_value`) among all density features. The clipping process maintains this strong predictive signal:
+
+| Feature | Correlation |
+| -------------- | ----------: |
+| total_rooms |    0.134153 |
+| total_bedrooms |    0.049457 |
+| bedrooms_per_room |   -0.245496 |
+
+By shifting focus from raw absolute counts to an internal layout ratio, the feature provides a massive predictive jump. It successfully maps the reality that highly packed districts command lower market valuations.
+
+> **Decision:**
 >
-> - `bedrooms_per_room` shows the strongest engineered relationship with housing prices, suggesting that districts with a lower proportion of bedrooms tend to have higher-valued properties.
+> The outlier clipping on `bedrooms_per_room` is highly effective and logically mandatory. It preserves the clean distribution of the valid data while eliminating impossible structural anomalies above 1.0. The cleaned feature will be officially retained in the deep learning preprocessing pipeline.
+
+
+### 2. Rooms Per Household
+
+Apply outlier capping and logarithmic transformation to handle the heavy positive skewness and extreme tail values in the average room capacity feature.
+
+#### Distribution Analysis
+
+The empirical distribution plots reveal a massive structural improvement following the transformation pipeline. The original engineered feature suffered from severe right-tail skewness, compressing the vast majority of districts into a narrow low-value range while a sparse trail stretched deep into the axis. By enforcing a hard cap at 15.0 rooms and applying the `log1p` transformation, the feature is fundamentally reshaped. As seen in the updated histogram, `rooms_per_household` now exhibits a highly symmetric, bell-shaped Gaussian-like distribution centered around 1.8. The small density spike at the far right ($\approx 2.77$) perfectly represents the capped extreme values. This normalized structure is highly optimal for neural network activations.
+
+<p align="center">
+  <img src="assets/rooms_per_household_histrogram.png" width="100%">
+</p>
+
+#### Outlier Analysis
+
+The baseline unclipped data contained extreme statistical outliers stretching up to 140 rooms per household, indicating non-residential properties or corrupted listings. Leaving these untreated exposes the gradient descent algorithm to severe scaling instability. Restricting the upper boundary to a realistic 15.0 isolates normal residential patterns. The subsequent log transformation compresses the entire feature range into a tight, highly stable scale between approximately 0.6 and 2.77. The updated boxplot demonstrates that while natural statistical variance remains, the numeric leverage of extreme outliers is entirely neutralized.
+
+<p align="center">
+  <img src="assets/rooms_per_household_boxplot.png" width="100%">
+</p>
+
+#### Correlation Analysis
+
+Normalizing the raw room count by household units, followed by mathematical scaling, provides a cleaner and more stable linear connection to the target variable (`median_house_value`):
+
+| Feature | Correlation |
+| -------------- | ----------: |
+| total_rooms | 0.134153 |
+| households | 0.065843 |
+| rooms_per_household | 0.260288 |
+
+The engineered and transformed ratio outperforms the original raw count, offering the deep learning model a reliable indicator of home sizing that is completely free of geographic scale bias and extreme variance.
+
+> **Decision:**
 >
-> - `population_per_household` exhibits a weak linear relationship with the target, although it may still contribute useful non-linear information during model training.
+> The combination of outlier capping and log transformation on `rooms_per_household` is structurally vital. It corrects severe skewness, bounds extreme non-residential outliers, and improves the linear signal over the baseline raw feature. The transformed feature will be officially integrated into the deep learning preprocessing pipeline.
+
+
+### 7. Population Per Household
+
+Apply 99th percentile outlier capping and logarithmic transformation to handle heavy right-skewness and stabilize spatial density variance.
+
+#### Distribution Analysis
+
+The empirical distribution plots show a flawless structural transformation. Originally, the engineered density feature was heavily right-skewed, forcing the vast majority of sectors into a narrow window while an extreme tail distorted the scale. Following the 99th percentile capping and the `log1p` mathematical transformation, the distribution turns into a highly symmetric, bell-shaped Gaussian profile centered around 1.35. The distinct density accumulation visible at the far right edge ($\approx 1.85$) represents the safely capped extreme spatial anomalies. This balanced topology is highly ideal for continuous activation layers within deep learning models.
+
+<p align="center">
+  <img src="assets/population_per_household_histrogram.png" width="100%">
+</p>
+
+#### Outlier Analysis
+
+The baseline unclipped feature contained massive spatial anomalies with extreme population-to-household ratios, introducing massive scale variance into the dataset. Calculating the 99th percentile boundary and applying a hard upper clip safely captures these anomalies without loss of neighborhood representation. As demonstrated in the updated boxplot, the final operational feature space is securely compressed and bounded between approximately 0.5 and 1.85. While valid statistical variance remains visible at both ends, the mathematical leverage of extreme values is entirely neutralized, shielding backpropagation from gradient instability.
+
+<p align="center">
+  <img src="assets/population_per_household_boxplot.png" width="100%">
+</p>
+
+#### Correlation Analysis
+
+Normalizing absolute population counts into a household density ratio, followed by range compression, uncovers a massively amplified predictive signal for the target variable (`median_house_value`):
+
+| Feature | Correlation |
+| -------------- | ----------: |
+| population |   -0.024650 |
+| households |    0.065843 |
+| population_per_household |   -0.277509 |
+
+While raw population and household counts offer almost negligible linear signals, the engineered ratio exposes a strong negative correlation of -0.277509. This accurately captures the macroeconomic reality that heavily crowded household environments strongly map to lower property valuations.
+
+> **Decision:**
+>
+> The combination of 99th percentile capping and `log1p` transformation on `population_per_household` is structurally indispensable. It successfully normalizes a highly chaotic distribution, limits extreme outlier leverage, and uncovers one of the most potent linear signals for our deep learning pipeline. The feature will be officially retained.
