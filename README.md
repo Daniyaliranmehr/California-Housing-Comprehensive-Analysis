@@ -48,7 +48,7 @@ This section includes the following subsections:
 
     2. Feature Engineering
 
-    3. Skewness Treatment
+    3. Feature Transformation
 
     4. Encoding
     
@@ -852,3 +852,18 @@ While raw population and household counts offer almost negligible linear signals
 > **Decision:**
 >
 > The combination of 99th percentile capping and `log1p` transformation on `population_per_household` is structurally indispensable. It successfully normalizes a highly chaotic distribution, limits extreme outlier leverage, and uncovers one of the most potent linear signals for our deep learning pipeline. The feature will be officially retained.
+
+
+### 4.  Encoding
+
+Machine learning models require numerical input features and cannot directly process categorical text values. The California Housing dataset contains one categorical feature, `ocean_proximity`, which describes the location of a district relative to the ocean.
+
+To convert this feature into a machine-readable format, **One-Hot Encoding** was applied. This technique creates a separate binary column for each category, allowing the model to learn location-specific patterns without introducing any artificial ordering between categories.
+
+The original `ocean_proximity` column was replaced with the following encoded features:
+
+- `ocean_proximity_<1H OCEAN`
+- `ocean_proximity_INLAND`
+- `ocean_proximity_ISLAND`
+- `ocean_proximity_NEAR BAY`
+- `ocean_proximity_NEAR OCEAN`
