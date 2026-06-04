@@ -867,3 +867,28 @@ The original `ocean_proximity` column was replaced with the following encoded fe
 - `ocean_proximity_ISLAND`
 - `ocean_proximity_NEAR BAY`
 - `ocean_proximity_NEAR OCEAN`
+
+
+### 5. Feature Scaling
+
+Feature scaling is applied to ensure that all numerical features contribute equally during model training. Since different features in the dataset have varying ranges and magnitudes, models (especially gradient-based methods) may become biased toward features with larger values. Standardization helps improve training stability and convergence speed by transforming features into a common scale.
+
+The dataset is split into:
+
+- **Train set:** 70%
+- **Validation set:** 20%
+- **Test set:** 10%
+
+All numerical features are then standardized using statistics computed from the training set.
+
+### Standardization Formula
+
+$$
+z = \frac{x - \mu}{\sigma}
+$$
+
+Where:
+- \( x \): original feature value  
+- \( \mu \): mean of the training set  
+- \( \sigma \): standard deviation of the training set  
+- \( z \): standardized value
