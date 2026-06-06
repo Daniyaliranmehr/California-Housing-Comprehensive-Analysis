@@ -942,16 +942,22 @@ $$
 \mathcal{L}_{MSE} = \frac{1}{N} \sum_{i=1}^{N} (y_i - \hat{y}_i)^2
 $$
 
+<p align="center">
+  <img src="assets/MSE.png" width="20%">
+</p>
+
+
 
 **Final Results (Epoch 300/300)**
 
 | Metric | Train    | Validation |
-|--------|---------|------------|
+|:--------:|:---------:|:------------:|
 | Loss   | 0.1386  | 0.2145     |
 | R²     | 0.8614  | 0.7879     |
 
 
 **Learning Curves**
+
 <p align="center">
   <img src="assets/MSE_learning_curves.png" width="100%">
 </p>
@@ -968,3 +974,41 @@ $$
 #### Overfitting Observation
 
 After epoch 70, a clear divergence occurs. The training metrics continue to improve, but the validation loss plateaus and begins a volatile upward trend. Simultaneously, the validation $R^2$ slowly degrades. This expanding gap between the training and validation curves confirms that the deep learning model is overfitting the training data after the 70th epoch.
+
+---
+
+### Mean Absolute Error (MAE)
+$$
+\text{MAE} = \frac{1}{n} \sum_{i=1}^{n} \left| y_i - \hat{y}_i \right|
+$$
+
+<p align="center">
+  <img src="assets/MAE.png" width="20%">
+</p>
+
+**Final Results (Epoch 300/300)**
+
+| Metric | Train    | Validation |
+|:--------:|:---------:|:------------:|
+| Loss   | 0.2339  | 0.3138     |
+| R²     | 0.8672  | 0.7665     |
+
+
+**Learning Curves**
+
+<p align="center">
+  <img src="assets/MAE_learning_curves.png" width="100%">
+</p>
+
+<p align="center">
+  <img src="assets/MAE_overfitting_check.png" width="100%">
+</p>
+
+#### Performance Overview
+
+* **Training Phase:** The model demonstrates a strong capacity to learn from the training dataset. The training loss steadily decreases and stabilizes around 0.23 to 0.24, while the training $R^2$ score remains highly stable and reaches approximately 0.86.
+* **Validation Phase:** The validation metrics remain significantly worse than the training metrics throughout the entire process. The validation loss hovers around 0.31, and the validation $R^2$ score is consistently near 0.77, without showing meaningful improvement over time.
+
+#### Overfitting and Volatility Observation
+
+A clear and persistent gap exists between the training and validation curves from the very early epochs. This continuous divergence confirms that the model is overfitting the training data and struggles to generalize. Furthermore, both validation curves exhibit extreme volatility and high-frequency noise across all 300 epochs. This severe fluctuation is a characteristic behavior of the Mean Absolute Error (MAE) loss function; because its gradient remains constant even for very small errors, it prevents the model from settling smoothly into a minimum, leading to continuous bouncing around the optimal point.

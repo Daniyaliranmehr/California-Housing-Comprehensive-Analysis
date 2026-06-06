@@ -16,6 +16,10 @@ from torchmetrics import R2Score
 
 import matplotlib.pyplot as plt
 
+from rich.live import Live
+from rich.panel import Panel
+
+
 class AverageMeter(object):
     """
     Computes and stores the average and current value
@@ -118,6 +122,10 @@ class Trainer:
 
     def fit(self, train_loader, valid_loader, epochs=100, log_every=10):
 
+        best_valid_r2 = float("-inf")
+        best_valid_loss = float("inf")
+        best_epoch = 0
+
         with Progress(
             SpinnerColumn(),
             TextColumn("[bold blue]{task.description}"),
@@ -125,10 +133,28 @@ class Trainer:
             TextColumn("{task.percentage:>3.0f}%"),
             TimeElapsedColumn(),
             TimeRemainingColumn(),
-            console=self.console
+            TextColumn(" • "),
+            TextColumn(
+                "[bold yellow]Best R²:[/bold yellow] {task.fields[best_r2]:.4f}"
+            ),
+            TextColumn(" | "),
+            TextColumn(
+                "[bold green]Best Loss:[/bold green] {task.fields[best_loss]:.4f}"
+            ),
+            TextColumn(" | "),
+            TextColumn(
+                "[bold cyan]Epoch:[/bold cyan] {task.fields[best_epoch]}"
+            ),
+            console=self.console,
         ) as progress:
 
-            task = progress.add_task("[cyan]Training Model...", total=epochs)
+            task = progress.add_task(
+                "[cyan]Training Model...",
+                total=epochs,
+                best_r2=0.0,
+                best_loss=0.0,
+                best_epoch=0,
+            )
 
             for epoch in range(1, epochs + 1):
 
@@ -141,19 +167,42 @@ class Trainer:
                 self.r2_train_history.append(train_r2)
                 self.r2_valid_history.append(valid_r2)
 
-                progress.advance(task)
+                if valid_r2 > best_valid_r2:
+                    best_valid_r2 = valid_r2
+                    best_valid_loss = valid_loss
+                    best_epoch = epoch
+
+                progress.update(
+                    task,
+                    advance=1,
+                    best_r2=best_valid_r2,
+                    best_loss=best_valid_loss,
+                    best_epoch=best_epoch,
+                )
 
                 if epoch == 1 or epoch % log_every == 0 or epoch == epochs:
 
-                    table = Table(title=f"Epoch {epoch}/{epochs}", show_header=True, show_lines=False)
+                    table = Table(
+                        title=f"Epoch {epoch}/{epochs}",
+                        show_header=True,
+                        show_lines=False,
+                    )
 
                     table.add_column("Metric", justify="left")
                     table.add_column("Train", justify="right")
                     table.add_column("Validation", justify="right")
 
-                    table.add_row("Loss",f"{train_loss:.4f}",f"{valid_loss:.4f}")
+                    table.add_row(
+                        "Loss",
+                        f"{train_loss:.4f}",
+                        f"{valid_loss:.4f}",
+                    )
 
-                    table.add_row("R²", f"{train_r2:.4f}", f"{valid_r2:.4f}")
+                    table.add_row(
+                        "R²",
+                        f"{train_r2:.4f}",
+                        f"{valid_r2:.4f}",
+                    )
 
                     self.console.print(table)
 
