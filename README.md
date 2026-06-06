@@ -18,7 +18,10 @@ This project presents an end-to-end experimental analysis of the California Hous
 
 ## Data Analysis and Preparation
 
-To gain a better understanding of the dataset, I will analyze various aspects of the data and prepare it for model training.
+To gain a better understanding of the dataset, I will analyze various aspects of the data and prepare it for model training. 
+
+The source codes of this section are availabel in `01_data_preparation.ipynb`, and the reusable modules are organized in `data_utils.py`.
+
 
 This section includes the following subsections:
 
@@ -59,18 +62,18 @@ This section includes the following subsections:
 ## 1. Data Understanding
 Initial exploration of the dataset to understand its structure, feature types, missing values, and basic statistical properties. This step provides a foundational understanding of the data before performing deeper analysis and preprocessing.
 
-#### 1. Dataset Structure
+### 1. Dataset Structure
 
 The dataset used in this project is the California Housing dataset, which contains information about housing blocks in California based on the 1990 census.
 It includes multiple geographic and housing features that can help predict median house values.
 
-#### Dataset Information
+### Dataset Information
 - **Number of instances:** 20,640
 - **Number of features:** 10
 - **Target variable:** `median_house_value`
 - **Task type:** Regression
 
-#### Features
+### Features
 
 | Feature | Description |
 |----------|-------------|
@@ -85,7 +88,7 @@ It includes multiple geographic and housing features that can help predict media
 | `ocean_proximity` | Proximity of the district to the ocean |
 | `median_house_value` | Median house value in the district (target variable) |
 
-#### Target Variable
+### Target Variable
 
 | Target | Description |
 |----------|-------------|
@@ -93,7 +96,7 @@ It includes multiple geographic and housing features that can help predict media
 
 
 
-#### 2. Initial Statistical Insights
+### 2. Initial Statistical Insights
 
 1. Population
     - mean = 1425
@@ -110,7 +113,7 @@ It includes multiple geographic and housing features that can help predict media
 > #### Key Findings:
 > Large gaps between mean and maximum values in several features suggest the presence of skewed distributions and potential extreme values.
 
-#### 3. Missing Values
+### 3. Missing Values
 
 - Total missing values: 207 (all in the `total_bedrooms` column)
 
@@ -892,3 +895,76 @@ Where:
 - \( \mu \): mean of the training set  
 - \( \sigma \): standard deviation of the training set  
 - \( z \): standardized value
+
+---
+
+## Training Models with Different Loss Functions
+
+I explore the effect of different loss functions on training regression models. Choosing the right loss helps improve convergence, stability, and accuracy. This comparison highlights which loss works best for this task.
+
+The source codes of this section are availabel in `02_loss_functions.ipynb`, and the reusable modules are organized in `training_utils.py`.
+
+This section includes the following subsections:
+
+1. **Explore Loss Functions**
+
+    1. MSE
+
+    2. MAE
+
+    3. Huber
+
+    4. Adaptive
+
+    5. Create a table of R² scores
+
+2. **Explore Optimization**
+
+    1. Adam
+
+    2. SGD
+
+    3. SGD with Momentum
+
+    4. SGD with Nesterov
+
+    5. Rmsprop
+
+---
+
+## 1. Explore Loss Functions
+In this section, different loss functions are implemented to evaluate their impact on model behavior. Finally, the R² score for each loss function is compared in a summary table.
+
+The optimizer for all models is Adam.
+
+### 1. Mean Squared Error (MSE)
+$$
+\mathcal{L}_{MSE} = \frac{1}{N} \sum_{i=1}^{N} (y_i - \hat{y}_i)^2
+$$
+
+
+**Final Results (Epoch 300/300)**
+
+| Metric | Train    | Validation |
+|--------|---------|------------|
+| Loss   | 0.1386  | 0.2145     |
+| R²     | 0.8614  | 0.7879     |
+
+
+**Learning Curves**
+<p align="center">
+  <img src="assets/MSE_learning_curves.png" width="100%">
+</p>
+
+<p align="center">
+  <img src="assets/MSE_overfitting_check.png" width="100%">
+</p>
+
+#### Performance Overview
+
+* **Training Phase:** The model learns effectively from the training dataset. The training loss decreases steadily to roughly 0.13, while the training $R^2$ score improves to approximately 0.86.
+* **Validation Phase:** The validation metrics improve alongside the training metrics initially, reaching their best values between epochs 60 and 70 with a loss around 0.22 and an $R^2$ near 0.78.
+
+#### Overfitting Observation
+
+After epoch 70, a clear divergence occurs. The training metrics continue to improve, but the validation loss plateaus and begins a volatile upward trend. Simultaneously, the validation $R^2$ slowly degrades. This expanding gap between the training and validation curves confirms that the deep learning model is overfitting the training data after the 70th epoch.
