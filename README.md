@@ -952,8 +952,13 @@ $$
 
 | Metric | Train    | Validation |
 |:--------:|:---------:|:------------:|
-| Loss   | 0.1386  | 0.2145     |
-| R²     | 0.8614  | 0.7879     |
+| Loss   | 0.1206  | 0.2452     |
+| R²     | 0.8794  | 0.7734     |
+
+
+**Best Validation Results**
+- Best $R^2$: 0.7872 &nbsp; | &nbsp; Epoch: 72
+- Best Loss: 0.2256 &nbsp; | &nbsp; Epoch: 137
 
 
 **Learning Curves**
@@ -968,16 +973,16 @@ $$
 
 #### Performance Overview
 
-* **Training Phase:** The model learns effectively from the training dataset. The training loss decreases steadily to roughly 0.13, while the training $R^2$ score improves to approximately 0.86.
-* **Validation Phase:** The validation metrics improve alongside the training metrics initially, reaching their best values between epochs 60 and 70 with a loss around 0.22 and an $R^2$ near 0.78.
+* **Training Phase:** The model learns effectively from the training dataset. The training loss decreases steadily to roughly 0.12, while the training $R^2$ score improves to approximately 0.88.
+* **Validation Phase:** The validation metrics improve alongside the training metrics initially. The validation $R^2$ score reaches its peak value of 0.78 at epoch 72, while the validation loss achieves its minimum value of 0.22 at epoch 137.
 
 #### Overfitting Observation
 
-After epoch 70, a clear divergence occurs. The training metrics continue to improve, but the validation loss plateaus and begins a volatile upward trend. Simultaneously, the validation $R^2$ slowly degrades. This expanding gap between the training and validation curves confirms that the deep learning model is overfitting the training data after the 70th epoch.
+Following these optimal phases, a clear divergence becomes evident between the training and validation curves. While the training metrics continue to steadily improve, the validation loss plateaus and begins a volatile upward trend. Simultaneously, the validation $R^2$ experiences a noisy and gradual degradation. This expanding gap confirms that the deep learning model overfits the training data in the subsequent epochs.
 
 ---
 
-### Mean Absolute Error (MAE)
+### 2. Mean Absolute Error (MAE)
 $$
 \text{MAE} = \frac{1}{n} \sum_{i=1}^{n} \left| y_i - \hat{y}_i \right|
 $$
@@ -990,9 +995,12 @@ $$
 
 | Metric | Train    | Validation |
 |:--------:|:---------:|:------------:|
-| Loss   | 0.2339  | 0.3138     |
-| R²     | 0.8672  | 0.7665     |
+| Loss   | 0.2503  | 0.2978     |
+| R²     | 0.8402  | 0.7870     |
 
+**Best Validation Results**
+- Best $R^2$: 0.7987 &nbsp; | &nbsp; Epoch: 169
+- Best Loss: 0.2918 &nbsp; | &nbsp; Epoch: 150
 
 **Learning Curves**
 
@@ -1006,9 +1014,55 @@ $$
 
 #### Performance Overview
 
-* **Training Phase:** The model demonstrates a strong capacity to learn from the training dataset. The training loss steadily decreases and stabilizes around 0.23 to 0.24, while the training $R^2$ score remains highly stable and reaches approximately 0.86.
-* **Validation Phase:** The validation metrics remain significantly worse than the training metrics throughout the entire process. The validation loss hovers around 0.31, and the validation $R^2$ score is consistently near 0.77, without showing meaningful improvement over time.
+* **Training Phase:** The model learns effectively from the training dataset. The training loss decreases steadily to roughly 0.25, while the training $R^2$ score improves to approximately 0.84.
+* **Validation Phase:** The validation metrics improve alongside the training metrics initially. The validation $R^2$ score reaches its peak value of 0.79 at epoch 169, while the validation loss achieves its minimum value of 0.29 at epoch 150.
 
-#### Overfitting and Volatility Observation
+#### Overfitting Observation
 
-A clear and persistent gap exists between the training and validation curves from the very early epochs. This continuous divergence confirms that the model is overfitting the training data and struggles to generalize. Furthermore, both validation curves exhibit extreme volatility and high-frequency noise across all 300 epochs. This severe fluctuation is a characteristic behavior of the Mean Absolute Error (MAE) loss function; because its gradient remains constant even for very small errors, it prevents the model from settling smoothly into a minimum, leading to continuous bouncing around the optimal point.
+After reaching these peak values, a subtle divergence appears between the training and validation curves. The model continues to learn from the training data, as seen by the steady improvement in training metrics. However, the validation loss plateaus with minor fluctuations, and the validation $R^2$ begins to slowly degrade. Since the validation metrics remain relatively stable without a sharp decline, this behavior indicates a mild case of overfitting in the later epochs.
+
+---
+
+### 3. Huber
+$$
+L_\delta(e)=
+\begin{cases}
+\frac{1}{2}e^2, & |e| \le \delta \\
+\delta \left(|e|-\frac{1}{2}\delta\right), & |e| > \delta
+\end{cases}
+$$
+
+
+<p align="center">
+  <img src="assets/Huber.png" width="20%">
+</p>
+
+**Final Results (Epoch 300/300)**
+
+| Metric | Train    | Validation |
+|:--------:|:---------:|:------------:|
+| Loss   | 0.0680  | 0.1007     |
+| R²     | 0.8556  | 0.7883     |
+
+**Best Validation Results**
+- Best $R^2$: 0.7941 &nbsp; | &nbsp; Epoch: 158
+- Best Loss: 0.0965 &nbsp; | &nbsp; Epoch: 91
+
+**Learning Curves**
+
+<p align="center">
+  <img src="assets/Huber_learning_curves.png" width="100%">
+</p>
+
+<p align="center">
+  <img src="assets/Huber_overfitting_check.png" width="100%">
+</p>
+
+#### Performance Overview
+
+* **Training Phase:** The model learns effectively from the training dataset. The training loss decreases steadily to roughly 0.07, while the training $R^2$ score improves to approximately 0.86.
+* **Validation Phase:** The validation metrics improve alongside the training metrics initially. The validation $R^2$ score reaches its peak value of 0.79 at epoch 158, while the validation loss achieves its minimum value of 0.09 at epoch 91.
+
+#### Overfitting Observation
+
+After reaching these peak values, a subtle divergence appears between the training and validation curves. The model continues to extract patterns from the training data, as demonstrated by the steady improvement in training metrics. However, the validation loss plateaus with minor fluctuations, and the validation $R^2$ remains highly stable without any significant degradation. Since the validation metrics hold steady rather than declining, this behavior indicates a very mild case of overfitting in the later epochs, primarily driven by the continuous improvement of the training scores.

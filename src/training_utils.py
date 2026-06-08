@@ -120,11 +120,13 @@ class Trainer:
 
         return loss_meter.avg, r2
 
-    def fit(self, train_loader, valid_loader, epochs=100, log_every=10):
+    def fit(self, train_loader, valid_loader, epochs=100, log_every=10, name=""):
 
         best_valid_r2 = float("-inf")
         best_valid_loss = float("inf")
-        best_epoch = 0
+
+        best_r2_epoch = 0
+        best_loss_epoch = 0
 
         with Progress(
             SpinnerColumn(),
@@ -134,27 +136,26 @@ class Trainer:
             TimeElapsedColumn(),
             TimeRemainingColumn(),
             TextColumn(" • "),
-            TextColumn(
-                "[bold yellow]Best R²:[/bold yellow] {task.fields[best_r2]:.4f}"
-            ),
+
+            TextColumn("[bold yellow]Best R²:[/bold yellow] {task.fields[best_r2]:.4f}"),
+            TextColumn(" Epoch [cyan]{task.fields[best_r2_epoch]}[/cyan]"),
+
             TextColumn(" | "),
-            TextColumn(
-                "[bold green]Best Loss:[/bold green] {task.fields[best_loss]:.4f}"
-            ),
-            TextColumn(" | "),
-            TextColumn(
-                "[bold cyan]Epoch:[/bold cyan] {task.fields[best_epoch]}"
-            ),
+
+            TextColumn("[bold green]Best Loss:[/bold green] {task.fields[best_loss]:.4f}"),
+            TextColumn(" Epoch [cyan]{task.fields[best_loss_epoch]}[/cyan]"),
             console=self.console,
         ) as progress:
 
             task = progress.add_task(
-                "[cyan]Training Model...",
-                total=epochs,
-                best_r2=0.0,
-                best_loss=0.0,
-                best_epoch=0,
-            )
+            "[cyan]Training Model...",
+            total=epochs,
+
+            best_r2=0.0,
+            best_r2_epoch=0,
+
+            best_loss=float("inf"),
+            best_loss_epoch=0,)
 
             for epoch in range(1, epochs + 1):
 
@@ -167,18 +168,27 @@ class Trainer:
                 self.r2_train_history.append(train_r2)
                 self.r2_valid_history.append(valid_r2)
 
+                # Best R²
                 if valid_r2 > best_valid_r2:
                     best_valid_r2 = valid_r2
+                    best_r2_epoch = epoch
+
+                    torch.save(self.model.state_dict(), f"../saved_values/{name}_best_model.pth")
+
+                # Best Loss
+                if valid_loss < best_valid_loss:
                     best_valid_loss = valid_loss
-                    best_epoch = epoch
+                    best_loss_epoch = epoch
 
                 progress.update(
                     task,
                     advance=1,
+
                     best_r2=best_valid_r2,
+                    best_r2_epoch=best_r2_epoch,
+
                     best_loss=best_valid_loss,
-                    best_epoch=best_epoch,
-                )
+                    best_loss_epoch=best_loss_epoch)
 
                 if epoch == 1 or epoch % log_every == 0 or epoch == epochs:
 
@@ -209,9 +219,15 @@ class Trainer:
         return {
             "train_loss": self.loss_train_history,
             "valid_loss": self.loss_valid_history,
+
             "train_r2": self.r2_train_history,
             "valid_r2": self.r2_valid_history,
-        }
+
+            "best_valid_r2": best_valid_r2,
+            "best_r2_epoch": best_r2_epoch,
+
+            "best_valid_loss": best_valid_loss,
+            "best_loss_epoch": best_loss_epoch}
 
 
 def plot_training_history(history, name, figsize=(10, 5)):
