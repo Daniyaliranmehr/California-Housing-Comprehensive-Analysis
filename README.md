@@ -891,10 +891,10 @@ z = \frac{x - \mu}{\sigma}
 $$
 
 Where:
-- \( x \): original feature value  
-- \( \mu \): mean of the training set  
-- \( \sigma \): standard deviation of the training set  
-- \( z \): standardized value
+- $x$: original feature value  
+- $\mu$: mean of the training set  
+- $\sigma$: standard deviation of the training set  
+- $z$: standardized value
 
 ---
 
@@ -1024,6 +1024,7 @@ After reaching these peak values, a subtle divergence appears between the traini
 ---
 
 ### 3. Huber
+
 $$
 L_\delta(e)=
 \begin{cases}
@@ -1066,3 +1067,56 @@ $$
 #### Overfitting Observation
 
 After reaching these peak values, a subtle divergence appears between the training and validation curves. The model continues to extract patterns from the training data, as demonstrated by the steady improvement in training metrics. However, the validation loss plateaus with minor fluctuations, and the validation $R^2$ remains highly stable without any significant degradation. Since the validation metrics hold steady rather than declining, this behavior indicates a very mild case of overfitting in the later epochs, primarily driven by the continuous improvement of the training scores.
+
+
+
+### 4. Adaptive 
+This section on Adaptive Robust Loss is based on the work by Jonathan T. Barron:  
+*A General and Adaptive Robust Loss Function*, 2019. [Paper link](https://arxiv.org/abs/1701.03077)
+
+Adaptive loss allows us to obtain a variety of loss functions by adjusting the value of $\alpha$.
+
+
+- If $\alpha$ = 2:
+
+$$
+\frac{1}{2}(\frac{x}{c})^2
+$$
+
+When $\alpha = 2$, the adaptive loss reduces to the standard quadratic loss, which is equivalent to the **Mean Squared Error (MSE)**. This loss penalizes larger errors more heavily and is sensitive to outliers.
+
+<p align="center">
+  <img src="./assets/Adaptive_Loss_Quadratic.png" width="20%">
+</p>
+
+
+**Final Results (Epoch 300/300)**
+
+| Metric | Train    | Validation |
+|:--------:|:---------:|:------------:|
+| Loss   | 0.0695  | 0.1107     |
+| R²     | 0.8610  | 0.7782     |
+
+**Best Validation Results**
+- Best $R^2$: 0.7889 &nbsp; | &nbsp; Epoch: 240
+- Best Loss: 0.1054 &nbsp; | &nbsp; Epoch: 240
+
+**Learning Curves**
+
+<p align="center">
+  <img src="assets/Adaptive_Quadratic_learning_curves.png" width="100%">
+</p>
+
+<p align="center">
+  <img src="assets/Adaptive_Quadratic_overfitting_check.png" width="100%">
+</p>
+
+
+#### Performance Overview
+
+* **Training Phase:** The model demonstrates steady and effective learning throughout the training process. The training loss decreases consistently to approximately 0.07, while the training $R^2$ score continuously improves, reaching around 0.86.
+* **Validation Phase:** The validation metrics closely follow the training progression initially. The validation $R^2$ score reaches its peak value of 0.78 at epoch 240, while the validation loss achieves its minimum value of 0.10 at epoch 240.
+
+#### Overfitting Observation
+
+After reaching these optimal values, the model exhibits a highly controlled and subtle divergence. While the training metrics continue their gradual improvement, the validation loss plateaus with minor fluctuations, and the validation $R^2$ remains remarkably flat and stable. Because the validation performance holds its ground instead of deteriorating, this indicates only a very mild case of overfitting in the later epochs, showing that the adaptive quadratic loss maintains strong generalization.
