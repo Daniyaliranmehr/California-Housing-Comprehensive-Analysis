@@ -1278,3 +1278,45 @@ This loss is a smooth approximation of the L1 loss. It grows linearly for large 
 #### Overfitting Observation
 
 After reaching these optimal values, the learning curves demonstrate a high level of stability. While the training metrics continue their gradual improvement, the validation loss plateaus with only minor fluctuations, and the validation $R^2$ remains consistently flat without any noticeable degradation. Because the validation performance holds its ground instead of deteriorating, this indicates only a very mild case of overfitting in the later epochs. The Charbonnier loss configuration proves to be robust, maintaining strong generalization capabilities throughout the remainder of the training process.
+
+
+#### • $\alpha$ = -2:
+
+When α = -2, the adaptive loss reduces to the **Geman-McClure loss**.
+*German & McClure, 1987, Robust regression using a bounded influence function*. [Paper link](https://www.dam.brown.edu/people/geman/Homepage/Image%20processing,%20image%20analysis,%20Markov%20random%20fields,%20and%20MCMC/1985GemanMcClureASA.pdf).
+
+This loss is robust to outliers: it grows sub-quadratically for large errors, limiting the influence of extreme deviations. For small errors, it behaves similarly to the L2 loss, ensuring smooth gradients and stable optimization.
+
+<p align="center">
+  <img src="./assets/Adaptive_Loss_Geman-McClure.png" width="40%">
+</p>
+
+**Final Results (Epoch 300/300)**
+
+| Metric | Train    | Validation |
+|:--------:|:---------:|:------------:|
+| Loss   | 0.0556  | 0.0811     |
+| R²     | 0.8572  | 0.7798     |
+
+**Best Validation Results**
+- Best $R^2$: 0.7961 &nbsp; | &nbsp; Epoch: 117
+- Best Loss: 0.0770 &nbsp; | &nbsp; Epoch: 165
+
+**Learning Curves**
+
+<p align="center">
+  <img src="assets/Adaptive_Geman_McClure_learning_curves.png" width="100%">
+</p>
+
+<p align="center">
+  <img src="assets/Adaptive_Geman_McClure_overfitting_check.png" width="100%">
+</p>
+
+#### Performance Overview
+
+* **Training Phase:** The model learns effectively from the training dataset. The training loss decreases steadily to roughly 0.06, while the training $R^2$ score improves to approximately 0.86.
+* **Validation Phase:** The validation metrics closely follow the training progression initially. The validation $R^2$ score reaches its peak value of 0.79 at epoch 117, and the validation loss achieves its minimum value of 0.07 at epoch 165.
+
+#### Overfitting Observation
+
+After reaching these optimal values, the learning curves display excellent stability. While the training metrics continue their gradual and steady improvement, the validation loss plateaus with minor fluctuations, and the validation $R^2$ remains consistently flat without any significant degradation. Because the validation performance holds its ground remarkably well across later epochs, this behavior indicates only a very mild case of overfitting. The Geman-McClure configuration demonstrates strong robustness, maintaining reliable generalization capabilities throughout the extended training process.
