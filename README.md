@@ -943,7 +943,7 @@ $$
 $$
 
 <p align="center">
-  <img src="assets/MSE.png" width="20%">
+  <img src="assets/MSE.png" width="40%">
 </p>
 
 
@@ -988,7 +988,7 @@ $$
 $$
 
 <p align="center">
-  <img src="assets/MAE.png" width="20%">
+  <img src="assets/MAE.png" width="40%">
 </p>
 
 **Final Results (Epoch 300/300)**
@@ -1035,7 +1035,7 @@ $$
 
 
 <p align="center">
-  <img src="assets/Huber.png" width="20%">
+  <img src="assets/Huber.png" width="40%">
 </p>
 
 **Final Results (Epoch 300/300)**
@@ -1068,7 +1068,7 @@ $$
 
 After reaching these peak values, a subtle divergence appears between the training and validation curves. The model continues to extract patterns from the training data, as demonstrated by the steady improvement in training metrics. However, the validation loss plateaus with minor fluctuations, and the validation $R^2$ remains highly stable without any significant degradation. Since the validation metrics hold steady rather than declining, this behavior indicates a very mild case of overfitting in the later epochs, primarily driven by the continuous improvement of the training scores.
 
-
+---
 
 ### 4. Adaptive 
 This section on Adaptive Robust Loss is based on the work by Jonathan T. Barron:  
@@ -1077,7 +1077,7 @@ This section on Adaptive Robust Loss is based on the work by Jonathan T. Barron:
 Adaptive loss allows us to obtain a variety of loss functions by adjusting the value of $\alpha$.
 
 
-- If $\alpha$ = 2:
+#### • If $\alpha$ = 2:
 
 $$
 \frac{1}{2}(\frac{x}{c})^2
@@ -1086,7 +1086,7 @@ $$
 When $\alpha = 2$, the adaptive loss reduces to the standard quadratic loss, which is equivalent to the **Mean Squared Error (MSE)**. This loss penalizes larger errors more heavily and is sensitive to outliers.
 
 <p align="center">
-  <img src="./assets/Adaptive_Loss_Quadratic.png" width="20%">
+  <img src="./assets/Adaptive_Loss_Quadratic.png" width="40%">
 </p>
 
 
@@ -1120,3 +1120,161 @@ When $\alpha = 2$, the adaptive loss reduces to the standard quadratic loss, whi
 #### Overfitting Observation
 
 After reaching these optimal values, the model exhibits a highly controlled and subtle divergence. While the training metrics continue their gradual improvement, the validation loss plateaus with minor fluctuations, and the validation $R^2$ remains remarkably flat and stable. Because the validation performance holds its ground instead of deteriorating, this indicates only a very mild case of overfitting in the later epochs, showing that the adaptive quadratic loss maintains strong generalization.
+
+
+
+#### • If $\alpha$ = 0:
+
+$$
+\log(\frac{1}{2}(\frac{x}{c})^2 + 1)
+$$
+
+When $\alpha = 0$, the adaptive loss reduces to the **Cauchy loss**, which is also known as the Lorentzian loss.
+*Barron, 2019, A General and Adaptive Robust Loss Function*. [Paper link](https://arxiv.org/abs/1701.03077)
+
+This formulation provides a strongly robust objective that significantly reduces the influence of outliers by growing logarithmically rather than quadratically.
+
+<p align="center">
+  <img src="./assets/Adaptive_Loss_Cauchy.png" width="40%">
+</p>
+
+**Final Results (Epoch 300/300)**
+
+| Metric | Train    | Validation |
+|:--------:|:---------:|:------------:|
+| Loss   | 0.0696  | 0.1246     |
+| R²     | 0.8609  | 0.7646     |
+
+**Best Validation Results**
+- Best $R^2$: 0.7925 &nbsp; | &nbsp; Epoch: 103
+- Best Loss: 0.1066 &nbsp; | &nbsp; Epoch: 117
+
+**Learning Curves**
+
+<p align="center">
+  <img src="assets/Adaptive_Cauchy_learning_curves.png" width="100%">
+</p>
+
+<p align="center">
+  <img src="assets/Adaptive_Cauchy_overfitting_check.png" width="100%">
+</p>
+
+#### Performance Overview
+
+* **Training Phase:** The model learns effectively from the training dataset. The training loss decreases steadily to roughly 0.07, while the training $R^2$ score improves to approximately 0.86.
+* **Validation Phase:** The validation metrics improve alongside the training metrics initially. The validation $R^2$ score reaches its peak value of 0.79 at epoch 103, while the validation loss achieves its minimum value of 0.10 at epoch 117.
+
+#### Overfitting Observation
+
+After reaching these optimal values, a clear divergence is observed between the training and validation curves. While the training metrics continue their steady improvement, the validation loss begins a gradual, slightly noisy upward trend. Concurrently, the validation $R^2$ score starts to slowly degrade. Unlike the stable plateau observed in some other configurations, this noticeable deterioration in validation performance indicates a more pronounced overfitting phase in the later epochs.
+
+
+#### • If $\alpha \rightarrow -\infty$:
+
+$$
+L(x) =
+1 -
+\exp\left(
+-\frac{1}{2}
+\left(
+\frac{x}{c}
+\right)^2
+\right)
+$$
+
+When $\alpha \rightarrow -\infty$, the adaptive loss reduces to the **Welsch loss**.
+
+*Dennis Jr. & Welsch, 1978, Techniques for Nonlinear Least Squares and Robust Regression.* [Paper link](https://www.tandfonline.com/doi/abs/10.1080/03610917808812083)
+
+This loss strongly suppresses the influence of large errors by applying an exponential penalty. Unlike quadratic losses, the growth of the loss saturates for large residuals, making it highly robust to outliers.
+
+<p align="center">
+  <img src="./assets/Adaptive_Loss_Welsch.png" width="40%">
+</p>
+
+
+**Final Results (Epoch 300/300)**
+
+| Metric | Train    | Validation |
+|:--------:|:---------:|:------------:|
+| Loss   | 0.0548  | 0.0737     |
+| R²     | 0.8493  | 0.7917     |
+
+**Best Validation Results**
+- Best $R^2$: 0.7971 &nbsp; | &nbsp; Epoch: 169
+- Best Loss: 0.0734 &nbsp; | &nbsp; Epoch: 224
+
+**Learning Curves**
+
+<p align="center">
+  <img src="assets/Adaptive_Welsch_learning_curves.png" width="100%">
+</p>
+
+<p align="center">
+  <img src="assets/Adaptive_Welsch_overfitting_check.png" width="100%">
+</p>
+
+#### Performance Overview
+
+* **Training Phase:** The model learns effectively from the training dataset. The training loss decreases steadily to roughly 0.055, while the training $R^2$ score improves to approximately 0.85.
+* **Validation Phase:** The validation metrics closely follow the training progression initially. The validation $R^2$ score reaches its peak value of 0.79 at epoch 169, and the validation loss achieves its minimum value of 0.07 at epoch 224.
+
+#### Overfitting Observation
+
+After reaching these optimal values, the learning curves demonstrate remarkable stability. While the training metrics continue their gradual improvement, the validation loss plateaus with very minor fluctuations. Concurrently, the validation $R^2$ remains consistently flat without any degradation. Because the validation performance holds its ground exceptionally well over a long period, this indicates only a very mild case of overfitting in the later epochs. The Welsch loss configuration proves to be highly robust, maintaining strong generalization capabilities throughout the extended training process.
+
+
+#### • If $\alpha$ = 1 or $\alpha$ = -2:
+
+$$
+L(x;\alpha,c)=
+\frac{|\alpha-2|}{\alpha}
+\left(
+\left(
+\frac{\left(\frac{x}{c}\right)^2}{|\alpha-2|}+1
+\right)^{\frac{\alpha}{2}}
+-1
+\right)
+$$
+
+
+#### • $\alpha$ = 1:
+
+When α = 1, the adaptive loss reduces to the **Charbonnier loss**.
+*Charbonnier et al., 1994, Two-parameter robust estimator for image restoration*. [Paper link](https://ieeexplore.ieee.org/document/413553).
+
+This loss is a smooth approximation of the L1 loss. It grows linearly for large errors, which makes it more robust to outliers compared to the standard quadratic loss, while still being differentiable at zero for stable optimization.
+
+<p align="center">
+  <img src="./assets/Adaptive_Loss_Charbonnier.png" width="40%">
+</p>
+
+**Final Results (Epoch 300/300)**
+
+| Metric | Train    | Validation |
+|:--------:|:---------:|:------------:|
+| Loss   | 0.0578  | 0.0892     |
+| R²     | 0.8631  | 0.7857     |
+
+**Best Validation Results**
+- Best $R^2$: 0.7923 &nbsp; | &nbsp; Epoch: 121
+- Best Loss: 0.0857 &nbsp; | &nbsp; Epoch: 121
+
+**Learning Curves**
+
+<p align="center">
+  <img src="assets/Adaptive_Charbonnier_learning_curves.png" width="100%">
+</p>
+
+<p align="center">
+  <img src="assets/Adaptive_Charbonnier_overfitting_check.png" width="100%">
+</p>
+
+#### Performance Overview
+
+* **Training Phase:** The model learns effectively from the training dataset. The training loss decreases steadily to roughly 0.06, while the training $R^2$ score improves to approximately 0.86.
+* **Validation Phase:** The validation metrics improve alongside the training metrics initially. The validation $R^2$ score reaches its peak value of 0.79 at epoch 121, and the validation loss achieves its minimum value of 0.08 at epoch 121.
+
+#### Overfitting Observation
+
+After reaching these optimal values, the learning curves demonstrate a high level of stability. While the training metrics continue their gradual improvement, the validation loss plateaus with only minor fluctuations, and the validation $R^2$ remains consistently flat without any noticeable degradation. Because the validation performance holds its ground instead of deteriorating, this indicates only a very mild case of overfitting in the later epochs. The Charbonnier loss configuration proves to be robust, maintaining strong generalization capabilities throughout the remainder of the training process.
