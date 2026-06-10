@@ -914,9 +914,11 @@ This section includes the following subsections:
 
     3. Huber
 
-    4. Adaptive
+    4. Log-Cosh
 
-    5. Create a table of R² scores
+    5. Adaptive
+
+    6. Comparison of R² scores
 
 2. **Explore Optimization**
 
@@ -1070,7 +1072,49 @@ After reaching these peak values, a subtle divergence appears between the traini
 
 ---
 
-### 4. Adaptive 
+### 4. Log-Cosh
+
+$$
+L(y, \hat{y}) = \frac{1}{N} \sum_{i=1}^{N} \log\left(\cosh(\hat{y}_i - y_i)\right)
+$$
+
+<p align="center">
+  <img src="./assets/Log-Cosh_Loss.png" width="40%">
+</p>
+
+**Final Results (Epoch 300/300)**
+
+| Metric | Train    | Validation |
+|:--------:|:---------:|:------------:|
+| Loss   | 0.0615  | 0.0916     |
+| R²     | 0.8586  | 0.7830     |
+
+**Best Validation Results**
+- Best $R^2$: 0.7898 &nbsp; | &nbsp; Epoch: 181
+- Best Loss: 0.0901 &nbsp; | &nbsp; Epoch: 142
+
+**Learning Curves**
+
+<p align="center">
+  <img src="assets/Log-Cosh_learning_curves.png" width="100%">
+</p>
+
+<p align="center">
+  <img src="assets/Log-Cosh_overfitting_check.png" width="100%">
+</p>
+
+#### Performance Overview
+
+* **Training Phase:** The model learns effectively from the training dataset. The training loss decreases steadily to roughly 0.06, while the training $R^2$ score improves to approximately 0.86.
+* **Validation Phase:** The validation metrics closely follow the training progression initially. The validation $R^2$ score reaches its peak value of 0.79 at epoch 117, and the validation loss achieves its minimum value of 0.07 at epoch 165.
+
+#### Overfitting Observation
+
+After reaching these optimal values, the learning curves display excellent stability. While the training metrics continue their gradual and steady improvement, the validation loss plateaus with minor fluctuations, and the validation $R^2$ remains consistently flat without any significant degradation. Because the validation performance holds its ground remarkably well across later epochs, this behavior indicates only a very mild case of overfitting. The Geman-McClure configuration demonstrates strong robustness, maintaining reliable generalization capabilities throughout the extended training process.
+
+---
+
+### 5. Adaptive 
 This section on Adaptive Robust Loss is based on the work by Jonathan T. Barron:  
 *A General and Adaptive Robust Loss Function*, 2019. [Paper link](https://arxiv.org/abs/1701.03077)
 

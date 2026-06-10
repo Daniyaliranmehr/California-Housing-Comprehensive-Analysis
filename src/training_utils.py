@@ -58,6 +58,11 @@ def Adaptive_loss(outputs, targets, c=1., alpha=1.):
          return torch.mean(loss)
 
 
+def log_cosh_loss(outputs, targets):
+    error = outputs - targets
+    return torch.mean(torch.log(torch.cosh(error + 1e-12)))
+
+
 class Model(nn.Module):
     """
     Define the Model Architecture
