@@ -906,7 +906,7 @@ The source codes of this section are availabel in `02_loss_functions.ipynb`, and
 
 This section includes the following subsections:
 
-1. **Explore Loss Functions**
+- **Explore Loss Functions**
 
     1. MSE
 
@@ -918,9 +918,9 @@ This section includes the following subsections:
 
     5. Adaptive
 
-    6. Comparison of R² scores
+    6. Comparison and Analysis
 
-2. **Explore Optimization**
+- **Explore Optimization**
 
     1. Adam
 
@@ -934,7 +934,7 @@ This section includes the following subsections:
 
 ---
 
-## 1. Explore Loss Functions
+## Explore Loss Functions
 In this section, different loss functions are implemented to evaluate their impact on model behavior. Finally, the R² score for each loss function is compared in a summary table.
 
 The optimizer for all models is Adam.
@@ -986,7 +986,7 @@ Following these optimal phases, a clear divergence becomes evident between the t
 
 ### 2. Mean Absolute Error (MAE)
 $$
-\text{MAE} = \frac{1}{n} \sum_{i=1}^{n} \left| y_i - \hat{y}_i \right|
+\mathcal{L}_{MAE} = \frac{1}{N} \sum_{i=1}^{N} \left| y_i - \hat{y}_i \right|
 $$
 
 <p align="center">
@@ -1121,13 +1121,13 @@ This section on Adaptive Robust Loss is based on the work by Jonathan T. Barron:
 Adaptive loss allows us to obtain a variety of loss functions by adjusting the value of $\alpha$.
 
 
-#### • If $\alpha$ = 2:
+#### • If $\alpha$ = 2 (Quadratic):
 
 $$
-\frac{1}{2}(\frac{x}{c})^2
+\mathcal{L}_{Quadratic}(x) = \frac{1}{2}\left(\frac{x}{c}\right)^2
 $$
 
-When $\alpha = 2$, the adaptive loss reduces to the standard quadratic loss, which is equivalent to the **Mean Squared Error (MSE)**. This loss penalizes larger errors more heavily and is sensitive to outliers.
+When $\alpha = 2$, the adaptive loss reduces to the standard **Quadratic loss**, which is equivalent to the **Mean Squared Error (MSE)**. This loss penalizes larger errors more heavily and is sensitive to outliers.
 
 <p align="center">
   <img src="./assets/Adaptive_Loss_Quadratic.png" width="40%">
@@ -1167,10 +1167,10 @@ After reaching these optimal values, the model exhibits a highly controlled and 
 
 
 
-#### • If $\alpha$ = 0:
+#### • If $\alpha$ = 0 (Cauchy):
 
 $$
-\log(\frac{1}{2}(\frac{x}{c})^2 + 1)
+\mathcal{L}_{Cauchy}(x) = \log\left(\frac{1}{2}\left(\frac{x}{c}\right)^2 + 1\right)
 $$
 
 When $\alpha = 0$, the adaptive loss reduces to the **Cauchy loss**, which is also known as the Lorentzian loss.
@@ -1213,17 +1213,10 @@ This formulation provides a strongly robust objective that significantly reduces
 After reaching these optimal values, a clear divergence is observed between the training and validation curves. While the training metrics continue their steady improvement, the validation loss begins a gradual, slightly noisy upward trend. Concurrently, the validation $R^2$ score starts to slowly degrade. Unlike the stable plateau observed in some other configurations, this noticeable deterioration in validation performance indicates a more pronounced overfitting phase in the later epochs.
 
 
-#### • If $\alpha \rightarrow -\infty$:
+#### • If $\alpha \rightarrow -\infty$ (Welsch):
 
 $$
-L(x) =
-1 -
-\exp\left(
--\frac{1}{2}
-\left(
-\frac{x}{c}
-\right)^2
-\right)
+\mathcal{L}_{Welsch}(x) = 1 - \exp\left(-\frac{1}{2}\left(\frac{x}{c}\right)^2\right)
 $$
 
 When $\alpha \rightarrow -\infty$, the adaptive loss reduces to the **Welsch loss**.
@@ -1268,10 +1261,10 @@ This loss strongly suppresses the influence of large errors by applying an expon
 After reaching these optimal values, the learning curves demonstrate remarkable stability. While the training metrics continue their gradual improvement, the validation loss plateaus with very minor fluctuations. Concurrently, the validation $R^2$ remains consistently flat without any degradation. Because the validation performance holds its ground exceptionally well over a long period, this indicates only a very mild case of overfitting in the later epochs. The Welsch loss configuration proves to be highly robust, maintaining strong generalization capabilities throughout the extended training process.
 
 
-#### • If $\alpha$ = 1 or $\alpha$ = -2:
+#### • If $\alpha$ = 1 (Charbonnier) or $\alpha$ = -2 (Geman-McClure):
 
 $$
-L(x;\alpha,c)=
+\mathcal{L}_{Adaptive}(x;\alpha,c)=
 \frac{|\alpha-2|}{\alpha}
 \left(
 \left(
@@ -1282,7 +1275,7 @@ L(x;\alpha,c)=
 $$
 
 
-#### • $\alpha$ = 1:
+#### • $\alpha$ = 1 (Charbonnier):
 
 When α = 1, the adaptive loss reduces to the **Charbonnier loss**.
 *Charbonnier et al., 1994, Two-parameter robust estimator for image restoration*. [Paper link](https://ieeexplore.ieee.org/document/413553).
@@ -1324,7 +1317,7 @@ This loss is a smooth approximation of the L1 loss. It grows linearly for large 
 After reaching these optimal values, the learning curves demonstrate a high level of stability. While the training metrics continue their gradual improvement, the validation loss plateaus with only minor fluctuations, and the validation $R^2$ remains consistently flat without any noticeable degradation. Because the validation performance holds its ground instead of deteriorating, this indicates only a very mild case of overfitting in the later epochs. The Charbonnier loss configuration proves to be robust, maintaining strong generalization capabilities throughout the remainder of the training process.
 
 
-#### • $\alpha$ = -2:
+#### • $\alpha$ = -2 (Geman-McClure):
 
 When α = -2, the adaptive loss reduces to the **Geman-McClure loss**.
 *German & McClure, 1987, Robust regression using a bounded influence function*. [Paper link](https://www.dam.brown.edu/people/geman/Homepage/Image%20processing,%20image%20analysis,%20Markov%20random%20fields,%20and%20MCMC/1985GemanMcClureASA.pdf).
@@ -1364,3 +1357,62 @@ This loss is robust to outliers: it grows sub-quadratically for large errors, li
 #### Overfitting Observation
 
 After reaching these optimal values, the learning curves display excellent stability. While the training metrics continue their gradual and steady improvement, the validation loss plateaus with minor fluctuations, and the validation $R^2$ remains consistently flat without any significant degradation. Because the validation performance holds its ground remarkably well across later epochs, this behavior indicates only a very mild case of overfitting. The Geman-McClure configuration demonstrates strong robustness, maintaining reliable generalization capabilities throughout the extended training process.
+
+
+### Comparison and Analysis
+
+In this section, I compare the performance of different regression loss functions using the **R² score**. 
+
+The R² score measures how well the model explains the variance of the target variable, giving us a clear metric to evaluate and rank different loss functions.
+
+I trained the same model with multiple loss functions and recorded their R² scores on the validation set. The table below shows a descending ranking of the loss functions based on their performance:
+
+| Rank | Loss Function       | The Best R² Score |
+|:------:|:------------------:|:----------:|
+| 1    | MAE                      | 0.7987     |
+| 2    | Adaptive - Welsch        | 0.7971     |
+| 3    | Adaptive - Geman-McClure | 0.7961     |
+| 4    | Huber                    | 0.7941     |
+| 5    | Adaptive - Cauchy        | 0.7925     |
+| 6    | Adaptive - Charbonnier   | 0.7923     |
+| 7    | Log-Cosh                 | 0.7898     |
+| 8    | Adaptive - Quadratic     | 0.7889     |
+| 9    | MSE                      | 0.7872     |
+
+
+The highest R² score was achieved by the MAE loss function (0.7987), while the lowest R² score was obtained by the MSE loss function (0.7872). The difference between the best and worst results is only 0.0115, indicating that the choice of loss function is not the dominant factor affecting model performance in this project. Instead, data preparation and feature engineering appear to have a greater impact on the final results.
+
+The California Housing dataset is not perfectly normally distributed. Although preprocessing techniques were applied to reduce skewness and mitigate outliers, some distributional irregularities still remain. In addition, the target variable contains a well-known capped value at 500001, which introduces further distortion into the data distribution.
+
+Under these conditions, loss functions such as MSE and Quadratic Loss are highly sensitive to large prediction errors because they penalize errors quadratically. As a result, the model tends to focus excessively on a small number of samples with large residuals, such as very expensive houses or properties located in special districts. This may reduce the model's overall ability to generalize across the entire dataset.
+
+$$
+\mathcal{L}_{MSE} = \frac{1}{N} \sum_{i=1}^{N} (y_i - \hat{y}_i)^2
+$$
+
+<p align="center">
+  <img src="./assets/MSE.png" width="40%">
+</p>
+
+In contrast, robust loss functions such as MAE and Welsch reduce the influence of extreme samples by limiting the impact of large residuals. Consequently, they achieve slightly better predictive performance on this dataset.
+
+$$
+\mathcal{L}_{MAE} = \frac{1}{N} \sum_{i=1}^{N} \left| y_i - \hat{y}_i \right|
+$$
+
+<p align="center">
+  <img src="./assets/MAE.png" width="40%">
+</p>
+
+The results also reveal an interesting trend among the Adaptive Loss variants. As the parameter α moves toward more robust loss formulations, the R² score generally improves. This observation suggests that robust loss functions provide better stability and generalization when the dataset contains residual outliers, skewed distributions, or other non-ideal characteristics.
+
+<p align="center">
+  <img src="./assets/Adaptive_Loss_Comparison.png" width="40%">
+</p>
+
+Overall, the experimental results indicate that robust loss functions consistently outperform traditional quadratic losses on the California Housing dataset, although the performance gap remains relatively small.
+
+
+
+
+
