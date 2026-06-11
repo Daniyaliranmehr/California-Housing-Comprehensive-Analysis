@@ -1358,6 +1358,7 @@ This loss is robust to outliers: it grows sub-quadratically for large errors, li
 
 After reaching these optimal values, the learning curves display excellent stability. While the training metrics continue their gradual and steady improvement, the validation loss plateaus with minor fluctuations, and the validation $R^2$ remains consistently flat without any significant degradation. Because the validation performance holds its ground remarkably well across later epochs, this behavior indicates only a very mild case of overfitting. The Geman-McClure configuration demonstrates strong robustness, maintaining reliable generalization capabilities throughout the extended training process.
 
+---
 
 ### Comparison and Analysis
 
