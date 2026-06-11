@@ -1414,6 +1414,60 @@ The results also reveal an interesting trend among the Adaptive Loss variants. A
 Overall, the experimental results indicate that robust loss functions consistently outperform traditional quadratic losses on the California Housing dataset, although the performance gap remains relatively small.
 
 
+## Explore Optimizers
 
+In this section, different optimizers are implemented to evaluate their impact on model behavior. Finally, the R² score for each optimizer is compared in a summary table.
 
+Given that the MAE loss function demonstrated the best performance in `02_loss_functions.ipynb`, it was adopted as the loss function for the optimizer experiment.
 
+### 1. Adam
+
+Adam was introduced by **Diederik P. Kingma** and **Jimmy Lei Ba** in 2015 at ICLR. [Paper link](https://arxiv.org/pdf/1412.6980).
+
+The Adam optimizer combines the ideas of Momentum and RMSprop by maintaining exponentially decaying averages of both gradients and squared gradients.
+
+$$
+m_t = \beta_1 m_{t-1} + (1 - \beta_1) g_t
+$$
+
+$$
+v_t = \beta_2 v_{t-1} + (1 - \beta_2) g_t^2
+$$
+
+$$
+\hat{m}_t = \frac{m_t}{1 - \beta_1^t}, \quad \hat{v}_t = \frac{v_t}{1 - \beta_2^t}
+$$
+
+$$
+\theta_t = \theta_{t-1} - \alpha \frac{\hat{m}_t}{\sqrt{\hat{v}_t} + \epsilon}
+$$
+
+**Final Results (Epoch 300/300)**
+
+| Metric | Train    | Validation |
+|:--------:|:---------:|:------------:|
+| Loss   | 0.0615  | 0.0916     |
+| R²     | 0.8586  | 0.7830     |
+
+**Best Validation Results**
+- Best $R^2$: 0.7953 &nbsp; | &nbsp; Epoch: 126
+- Best Loss: 0.2941 &nbsp; | &nbsp; Epoch: 181
+
+**Learning Curves**
+
+<p align="center">
+  <img src="assets/Adam_learning_curves.png" width="100%">
+</p>
+
+<p align="center">
+  <img src="assets/Adam_overfitting_check.png" width="100%">
+</p>
+
+#### Performance Overview
+
+* **Training Phase:** The model learns effectively from the training dataset. The training loss decreases steadily to roughly 0.24, while the training $R^2$ score improves to approximately 0.85.
+* **Validation Phase:** The validation metrics improve alongside the training metrics initially. The validation $R^2$ score reaches its peak value of 0.79 at epoch 126, and the validation loss achieves its minimum value of 0.29 at epoch 181.
+
+#### Overfitting Observation
+
+After reaching these optimal values, a subtle divergence appears between the training and validation curves. The model continues to extract patterns from the training data, as demonstrated by the steady improvement in training metrics. However, the validation loss plateaus with minor fluctuations, and the validation $R^2$ remains highly stable without any significant degradation. Because the validation performance holds its ground instead of deteriorating, this indicates only a very mild case of overfitting in the later epochs. The Adam optimizer combined with the MAE loss function demonstrates stable convergence and maintains reliable generalization capabilities throughout the extended training process.

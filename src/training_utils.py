@@ -1,6 +1,7 @@
 import torch
 from rich.console import Console
 import torch.nn as nn
+import numpy as np
 
 from rich.console import Console
 from rich.table import Table
@@ -297,3 +298,4 @@ def plot_training_history(history, name, figsize=(10, 5)):
 
     plt.savefig(f"../assets/{name}_learning_curves.png", dpi=300, bbox_inches='tight')
     plt.show()
+    
