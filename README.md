@@ -1471,3 +1471,61 @@ $$
 #### Overfitting Observation
 
 After reaching these optimal values, a subtle divergence appears between the training and validation curves. The model continues to extract patterns from the training data, as demonstrated by the steady improvement in training metrics. However, the validation loss plateaus with minor fluctuations, and the validation $R^2$ remains highly stable without any significant degradation. Because the validation performance holds its ground instead of deteriorating, this indicates only a very mild case of overfitting in the later epochs. The Adam optimizer combined with the MAE loss function demonstrates stable convergence and maintains reliable generalization capabilities throughout the extended training process.
+
+---
+
+### 2. AdamW
+
+AdamW was introduced by **Ilya Loshchilov** and **Frank Hutter** in 2019. It addresses a key issue in Adam regarding L2 regularization by decoupling weight decay from the gradient-based parameter update. This leads to better generalization and more effective regularization. [Paper link](https://arxiv.org/pdf/1711.05101).
+
+The AdamW optimizer maintains exponentially decaying averages of both gradients and squared gradients, similar to Adam, but applies weight decay as a separate step.
+
+$$
+m_t = \beta_1 m_{t-1} + (1 - \beta_1) g_t
+$$
+
+$$
+v_t = \beta_2 v_{t-1} + (1 - \beta_2) g_t^2
+$$
+
+$$
+\hat{m}_t = \frac{m_t}{1 - \beta_1^t}, \quad \hat{v}_t = \frac{v_t}{1 - \beta_2^t}
+$$
+
+$$
+\theta_t = \theta_{t-1} - \alpha \left( \frac{\hat{m}_t}{\sqrt{\hat{v}_t} + \epsilon} + \lambda \theta_{t-1} \right)
+$$
+
+Unlike Adam with L2 regularization, AdamW applies weight decay independently of the adaptive gradient update, resulting in improved optimization performance and better model generalization.
+
+**Final Results (Epoch 300/300)**
+
+| Metric | Train    | Validation |
+|:--------:|:---------:|:------------:|
+| Loss   | 0.2483  | 0.2930     |
+| R²     | 0.8409  | 0.7951     |
+
+**Best Validation Results**
+- Best $R^2$: 0.8027 &nbsp; | &nbsp; Epoch: 257
+- Best Loss: 0.2903 &nbsp; | &nbsp; Epoch: 257
+
+**Learning Curves**
+
+<p align="center">
+  <img src="assets/AdamW_learning_curves.png" width="100%">
+</p>
+
+<p align="center">
+  <img src="assets/AdamW_overfitting_check.png" width="100%">
+</p>
+
+#### Performance Overview
+
+* **Training Phase:** The model learns effectively from the training dataset. The training loss decreases steadily to roughly 0.25, while the training R^2 score improves to approximately 0.84.
+* **Validation Phase:** The validation metrics closely track the training progression well into the later stages of training. The validation R^2 score reaches an impressive peak value of 0.80 at epoch 257, and the validation loss achieves its minimum value of 0.29 at the same epoch.
+
+#### Overfitting Observation
+
+The learning curves demonstrate remarkable stability and late-stage convergence. Compared to the standard Adam optimizer, AdamW shows a distinct improvement in overall generalization. By properly decoupling weight decay from the gradient updates, AdamW more effectively regularizes the network weights. This explicit regularization is highly beneficial for the California Housing dataset, which contains complex, highly correlated features such as geographical coordinates and localized income distributions. The decoupled weight decay prevents the neural network from memorizing specific local noise or over-relying on individual features. 
+
+Consequently, the validation loss and $R^2$ score do not deteriorate but rather maintain a highly stable plateau even after hundreds of epochs. This behavior confirms that AdamW successfully mitigates overfitting, leading to superior and more robust performance on this specific regression task.
