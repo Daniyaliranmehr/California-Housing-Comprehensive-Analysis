@@ -1529,3 +1529,92 @@ Unlike Adam with L2 regularization, AdamW applies weight decay independently of 
 The learning curves demonstrate remarkable stability and late-stage convergence. Compared to the standard Adam optimizer, AdamW shows a distinct improvement in overall generalization. By properly decoupling weight decay from the gradient updates, AdamW more effectively regularizes the network weights. This explicit regularization is highly beneficial for the California Housing dataset, which contains complex, highly correlated features such as geographical coordinates and localized income distributions. The decoupled weight decay prevents the neural network from memorizing specific local noise or over-relying on individual features. 
 
 Consequently, the validation loss and $R^2$ score do not deteriorate but rather maintain a highly stable plateau even after hundreds of epochs. This behavior confirms that AdamW successfully mitigates overfitting, leading to superior and more robust performance on this specific regression task.
+
+
+### 3. SGD (Stochastic Gradient Descent)
+
+$$
+\theta_{t+1}
+=
+\theta_t
+-
+\eta
+\nabla_{\theta}
+\mathcal{L}_i(\theta_t)
+$$
+
+#### Effect of Learning Rate on SGD
+
+Unlike Adam, SGD uses a fixed learning rate for all parameters and does not automatically adapt the update size during training. As a result, the choice of learning rate has a significant impact on the optimization process.
+
+<p align="center">
+  <img src="assets/SGD1e-3_learning_curves.png" width="100%">
+</p>
+
+With a learning rate of **0.001**, the updates are very small, causing the model to learn slowly. The training and validation curves appear smooth with almost no fluctuations because the optimizer takes only tiny steps at each iteration. However, this conservative behavior may lead to underfitting, as the model may not reach a sufficiently good solution within the available number of epochs.
+
+<p align="center">
+  <img src="assets/SGD1e-2_learning_curves.png" width="100%">
+</p>
+
+When the learning rate is increased to **0.01**, the optimizer moves more aggressively through the loss landscape. The convergence becomes faster, and small oscillations begin to appear because the parameter updates are larger.
+
+<p align="center">
+  <img src="assets/SGD1e-1_learning_curves.png" width="100%">
+</p>
+
+
+With a learning rate of **0.1**, the optimizer takes much larger steps. This allows the model to reach a better solution more quickly and resulted in the highest validation performance. The larger updates also introduce noticeable oscillations in the training curves, which is expected because the optimizer frequently overshoots and corrects its trajectory while approaching the optimum.
+
+Overall, the results suggest that a learning rate of **0.1** provides the best balance between convergence speed and predictive performance for this particular dataset and model configuration.
+
+> To ensure a fair comparison among the optimizers, all experiments were conducted using the same learning rate of 0.001. Although SGD achieved better performance with a higher learning rate, the results reported in this section are based on the common configuration used across all optimizers.
+
+
+**Final Results (Epoch 300/300)**
+
+| Metric | Train    | Validation |
+|:--------:|:---------:|:------------:|
+| Loss   | 0.3454  | 0.3699     |
+| R²     | 0.7349  | 0.7141     |
+
+**Best Validation Results**
+- Best $R^2$: 0.7142 &nbsp; | &nbsp; Epoch: 299
+- Best Loss: 0.3701 &nbsp; | &nbsp; Epoch: 299
+
+### SGD with Momentum
+
+$$
+\begin{aligned}
+m_t &= \beta m_{t-1} + (1 - \beta) \nabla_{\theta}\mathcal{L}(\theta_{t-1}) \\
+\theta_t &= \theta_{t-1} - \eta m_t
+\end{aligned}
+$$
+
+**Final Results (Epoch 300/300)**
+
+| Metric | Train    | Validation |
+|:--------:|:---------:|:------------:|
+| Loss   | 0.2827  | 0.3154     |
+| R²     | 0.8031  | 0.7767     |
+
+**Best Validation Results**
+- Best $R^2$: 0.7781 &nbsp; | &nbsp; Epoch: 298
+- Best Loss: 0.3144 &nbsp; | &nbsp; Epoch: 287
+
+**Learning Curves**
+
+<p align="center">
+  <img src="assets/SGD_M_learning_curves.png" width="100%">
+</p>
+
+#### Performance Overview
+
+* **Training Phase:** The model learns in a highly stable and continuous manner. The training loss decreases exceptionally smoothly without local oscillations, while the training $R^2$ score shows a steady upward trajectory throughout the entire training process.
+* **Validation Phase:** The validation metrics perfectly mirror the training progression. The validation $R^2$ score reaches its peak value of 0.77 at epoch 298, and the validation loss achieves its minimum value of 0.31 at epoch 287.
+
+#### Underfitting Observation
+
+The learning curves show absolutely no signs of divergence or overfitting. The training and validation curves remain tightly coupled from the first epoch to the last. 
+
+However, this configuration presents a clear case of underfitting due to under-convergence. Because the Stochastic Gradient Descent (SGD) optimizer was configured with a momentum parameter and a carefully tuned, conservative learning rate of 0.001, the weight updates are extremely stable but relatively slow. As evidenced by the peak metrics occurring at the very end of the training cycle (epochs 287 and 298), the model has not yet fully mapped the complex patterns of the California Housing dataset. Both the loss and $R^2$ curves are still improving at epoch 300, indicating that while SGD with momentum provides a very safe optimization path, it requires a significantly higher number of epochs to match the final accuracy achieved by Adam or AdamW.
