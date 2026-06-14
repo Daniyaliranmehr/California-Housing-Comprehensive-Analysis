@@ -1530,6 +1530,7 @@ The learning curves demonstrate remarkable stability and late-stage convergence.
 
 Consequently, the validation loss and $R^2$ score do not deteriorate but rather maintain a highly stable plateau even after hundreds of epochs. This behavior confirms that AdamW successfully mitigates overfitting, leading to superior and more robust performance on this specific regression task.
 
+---
 
 ### 3. SGD (Stochastic Gradient Descent)
 
@@ -1582,7 +1583,9 @@ Overall, the results suggest that a learning rate of **0.1** provides the best b
 - Best $R^2$: 0.7142 &nbsp; | &nbsp; Epoch: 299
 - Best Loss: 0.3701 &nbsp; | &nbsp; Epoch: 299
 
-### SGD with Momentum
+---
+
+### 4. SGD with Momentum
 
 $$
 \begin{aligned}
@@ -1618,3 +1621,43 @@ $$
 The learning curves show absolutely no signs of divergence or overfitting. The training and validation curves remain tightly coupled from the first epoch to the last. 
 
 However, this configuration presents a clear case of underfitting due to under-convergence. Because the Stochastic Gradient Descent (SGD) optimizer was configured with a momentum parameter and a carefully tuned, conservative learning rate of 0.001, the weight updates are extremely stable but relatively slow. As evidenced by the peak metrics occurring at the very end of the training cycle (epochs 287 and 298), the model has not yet fully mapped the complex patterns of the California Housing dataset. Both the loss and $R^2$ curves are still improving at epoch 300, indicating that while SGD with momentum provides a very safe optimization path, it requires a significantly higher number of epochs to match the final accuracy achieved by Adam or AdamW.
+
+---
+
+### 5. SGD with Nesterov
+
+$$
+\begin{aligned}
+\hat{\theta}_t &= \theta_t + \beta m_t \\
+m_{t+1} &= \beta m_t - \eta \nabla_{\theta}\mathcal{L}(\hat{\theta}_t) \\
+\theta_{t+1} &= \theta_t + m_{t+1}
+\end{aligned}
+$$
+
+**Final Results (Epoch 300/300)**
+
+| Metric | Train    | Validation |
+|:--------:|:---------:|:------------:|
+| Loss   | 0.2846  | 0.3155     |
+| R²     | 0.8023  | 0.7705     |
+
+**Best Validation Results**
+- Best $R^2$: 0.7732 &nbsp; | &nbsp; Epoch: 292
+- Best Loss: 0.3147 &nbsp; | &nbsp; Epoch: 296
+
+**Learning Curves**
+
+<p align="center">
+  <img src="assets/SGD_N_learning_curves.png" width="100%">
+</p>
+
+#### Performance Overview
+
+* **Training Phase:** The model exhibits highly stable and continuous learning. The training loss decreases smoothly without significant fluctuations, and the training R^2 score maintains a steady upward trajectory.
+* **Validation Phase:** The validation metrics closely follow the training progression. The validation R^2 score reaches its peak value of 0.77 at epoch 292, and the validation loss achieves its minimum value of 0.31 at epoch 296.
+
+#### Underfitting Observation and Optimizer Comparison
+
+Similar to the standard momentum approach, the addition of Nesterov momentum entirely prevents the divergence issues seen in basic SGD. The learning curves show no signs of overfitting, as the training and validation lines remain tightly coupled throughout the 300 epochs.
+
+However, the model still exhibits underfitting due to under-convergence. While Nesterov momentum modifies the update rule by looking ahead of the current parameter state, the conservative learning rate still yields a very slow optimization path. The peak metrics occur near the very end of the training cycle, and both curves are still noticeably improving at epoch 300. This confirms that the model has not yet reached its full predictive capacity on the California Housing dataset and would require a significantly extended training duration to match the final accuracy of adaptive optimizers.
