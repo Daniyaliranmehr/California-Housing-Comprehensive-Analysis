@@ -1450,8 +1450,8 @@ $$
 | R²     | 0.8586  | 0.7830     |
 
 **Best Validation Results**
-- Best $R^2$: 0.7953 &nbsp; | &nbsp; Epoch: 126
-- Best Loss: 0.2941 &nbsp; | &nbsp; Epoch: 181
+- Best $R^2$: 0.7900 &nbsp; | &nbsp; Epoch: 152
+- Best Loss: 0.3008 &nbsp; | &nbsp; Epoch: 137
 
 **Learning Curves**
 
@@ -1466,7 +1466,7 @@ $$
 #### Performance Overview
 
 * **Training Phase:** The model learns effectively from the training dataset. The training loss decreases steadily to roughly 0.24, while the training $R^2$ score improves to approximately 0.85.
-* **Validation Phase:** The validation metrics improve alongside the training metrics initially. The validation $R^2$ score reaches its peak value of 0.79 at epoch 126, and the validation loss achieves its minimum value of 0.29 at epoch 181.
+* **Validation Phase:** The validation metrics improve alongside the training metrics initially. The validation $R^2$ score reaches its peak value of 0.79 at epoch 152, and the validation loss achieves its minimum value of 0.30 at epoch 137.
 
 #### Overfitting Observation
 
@@ -1656,8 +1656,49 @@ $$
 * **Training Phase:** The model exhibits highly stable and continuous learning. The training loss decreases smoothly without significant fluctuations, and the training R^2 score maintains a steady upward trajectory.
 * **Validation Phase:** The validation metrics closely follow the training progression. The validation R^2 score reaches its peak value of 0.77 at epoch 292, and the validation loss achieves its minimum value of 0.31 at epoch 296.
 
-#### Underfitting Observation and Optimizer Comparison
+#### Underfitting Observation
 
 Similar to the standard momentum approach, the addition of Nesterov momentum entirely prevents the divergence issues seen in basic SGD. The learning curves show no signs of overfitting, as the training and validation lines remain tightly coupled throughout the 300 epochs.
 
 However, the model still exhibits underfitting due to under-convergence. While Nesterov momentum modifies the update rule by looking ahead of the current parameter state, the conservative learning rate still yields a very slow optimization path. The peak metrics occur near the very end of the training cycle, and both curves are still noticeably improving at epoch 300. This confirms that the model has not yet reached its full predictive capacity on the California Housing dataset and would require a significantly extended training duration to match the final accuracy of adaptive optimizers.
+
+### 6. RMSprop
+
+$$
+\begin{aligned}
+s_t &= \rho s_{t-1} + (1-\rho)\left(\nabla_{\theta}\mathcal{L}(\theta_t)\right)^2 \\
+\theta_{t+1} &= \theta_t - \frac{\eta \nabla_{\theta}\mathcal{L}(\theta_t)}{\sqrt{s_t}+\epsilon}
+\end{aligned}
+$$
+
+**Final Results (Epoch 300/300)**
+
+| Metric | Train    | Validation |
+|:--------:|:---------:|:------------:|
+| Loss   | 0.2467  | 0.3000     |
+| R²     | 0.8447  | 0.7847     |
+
+**Best Validation Results**
+- Best $R^2$: 0.7950 &nbsp; | &nbsp; Epoch: 119
+- Best Loss: 0.2923 &nbsp; | &nbsp; Epoch: 222
+
+**Learning Curves**
+
+<p align="center">
+  <img src="assets/RMSprop_learning_curves.png" width="100%">
+</p>
+
+<p align="center">
+  <img src="assets/RMSprop_overfitting_check.png" width="100%">
+</p>
+
+#### Performance Overview
+
+* **Training Phase:** The model successfully extracts complex patterns from the training dataset. The training loss decreases consistently to approximately 0.24, and the training $R^2$ score climbs steadily to roughly 0.85.
+* **Validation Phase:** The validation metrics show rapid initial improvement alongside the training metrics. The validation R² score hits its peak at epoch 119 with a value of 0.79, while the validation loss reaches its absolute minimum of 0.29 at epoch 222.
+
+#### Overfitting Observation
+
+Similar to the standard Adam optimizer, a clear performance gap emerges between the training and validation curves during the later epochs. This divergence confirms the presence of overfitting, as the model continues to optimize on the training data while the overall validation trend stops improving.
+
+The most prominent characteristic of this RMSprop training session is the pronounced volatility in the validation curves. While the training metrics remain perfectly smooth, the validation loss and validation $R^2$ exhibit significant and continuous fluctuations once they reach their optimal plateau. Because RMSprop strictly adapts the learning rate by dividing the gradient by a moving average of its recent magnitude, it can lead to erratic parameter updates near the local minima. On a complex dataset like California Housing, this aggressive adaptation causes the model to constantly oscillate around the optimal weights. Consequently, while RMSprop achieves a highly competitive peak accuracy, it lacks the late stage stability observed in optimizers like AdamW.
