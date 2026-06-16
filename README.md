@@ -3,17 +3,25 @@
 ## Overview
 This project presents an end-to-end experimental analysis of the California Housing dataset. The primary objective is to perform an exhaustive exploratory data analysis (EDA) to understand the underlying patterns and statistical properties of the data. Following the preprocessing stage, the project focuses on designing and training various multilayer perceptron (MLP) architectures, systematically evaluating their performance using different loss functions and optimization algorithms to determine the most effective configuration for predictive modeling.
 
-## Applications
-
-...
-
 ## Project Structure
 
 ...
 
 ## File Descriptions
 
-...
+| File / Folder | Description |
+|---|---|
+| `assets/` | Images |
+| `dataset/` | Dataset files used for training and testing |
+| `notebooks/` | Notebooks containing the experiments and analyses for each project phase |
+| `notebooks/01_data_preparation.ipynb` | Analyze various aspects of the data and prepare it for model training |
+| `notebooks/02_loss_functions.ipynb` | Comparison of different loss functions and their impact on model performance |
+| `notebooks/03_optimizers.ipynb` | Comparison of different optimizers and their impact on model performance |
+| `notebooks/04_test.ipynb` | Testing the model trained with the best-performing loss function and optimizer |
+| `saved_values/` | Model checkpoints and processed data |
+| `src/` | Source files containing reusable classes and utility functions |
+| `src/training_utils.py` | Reusable utilities for model training, including helper functions and classes |
+| `src/data_utils.py` | Utility functions for data preprocessing and preparation |
 
 
 ## Data Analysis and Preparation
