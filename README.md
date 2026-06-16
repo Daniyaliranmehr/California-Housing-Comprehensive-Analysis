@@ -1521,8 +1521,8 @@ Unlike Adam with L2 regularization, AdamW applies weight decay independently of 
 
 #### Performance Overview
 
-* **Training Phase:** The model learns effectively from the training dataset. The training loss decreases steadily to roughly 0.25, while the training R^2 score improves to approximately 0.84.
-* **Validation Phase:** The validation metrics closely track the training progression well into the later stages of training. The validation R^2 score reaches an impressive peak value of 0.80 at epoch 257, and the validation loss achieves its minimum value of 0.29 at the same epoch.
+* **Training Phase:** The model learns effectively from the training dataset. The training loss decreases steadily to roughly 0.25, while the training $R^2$ score improves to approximately 0.84.
+* **Validation Phase:** The validation metrics closely track the training progression well into the later stages of training. The validation $R^2$ score reaches an impressive peak value of 0.80 at epoch 257, and the validation loss achieves its minimum value of 0.29 at the same epoch.
 
 #### Overfitting Observation
 
@@ -1702,3 +1702,25 @@ $$
 Similar to the standard Adam optimizer, a clear performance gap emerges between the training and validation curves during the later epochs. This divergence confirms the presence of overfitting, as the model continues to optimize on the training data while the overall validation trend stops improving.
 
 The most prominent characteristic of this RMSprop training session is the pronounced volatility in the validation curves. While the training metrics remain perfectly smooth, the validation loss and validation $R^2$ exhibit significant and continuous fluctuations once they reach their optimal plateau. Because RMSprop strictly adapts the learning rate by dividing the gradient by a moving average of its recent magnitude, it can lead to erratic parameter updates near the local minima. On a complex dataset like California Housing, this aggressive adaptation causes the model to constantly oscillate around the optimal weights. Consequently, while RMSprop achieves a highly competitive peak accuracy, it lacks the late stage stability observed in optimizers like AdamW.
+
+
+### Comparison and Anlysis
+
+In this section, I compare the performance of different optimizers using the **R² score**. 
+
+| Rank | Loss Function       | The Best R² Score |
+|:------:|:------------------:|:----------:|
+| 1    | AdamW                     | 0.7951     |
+| 2    | Adam                      | 0.7900     |
+| 3    | RMSprop                   | 0.7847     |
+| 4    | SGD with Momentum         | 0.7767     |
+| 5    | SGD with Nesterov         | 0.7705     |
+| 6    | SGD                       | 0.7141     |
+
+The results indicate that AdamW achieved the highest validation performance with an $R^2$ score of 0.7951, closely followed by Adam with 0.7900. The difference between these two optimizers is relatively small (0.0051), suggesting that both methods perform similarly on the California Housing dataset. RMSprop also produced competitive results with an $R^2$ score of 0.7847, remaining reasonably close to the two Adam-based optimizers.
+
+On the other hand, SGD-based methods showed lower performance. SGD with Momentum (0.7767) and SGD with Nesterov (0.7705) improved noticeably over vanilla SGD (0.7141), demonstrating the benefit of incorporating momentum into the optimization process. The gap between vanilla SGD and the best-performing optimizer (AdamW) is approximately 0.081, which is substantial compared to the differences observed among the adaptive optimizers.
+
+It is important to note that all experiments in this section were conducted using the same learning rate of 0.001 to ensure a fair comparison among the optimizers. While this setting is commonly used for adaptive optimizers such as Adam, AdamW, and RMSprop, it is often suboptimal for SGD-based methods. In preliminary experiments, SGD achieved considerably better performance when a larger learning rate was used. Therefore, the results reported here should be interpreted as a comparison under a common training configuration rather than the best achievable performance of each optimizer.
+
+In the previous notebook, the best result reached an $R^2$ score of 0.7987 using MAE loss with Adam. The difference between that score and the best optimizer result obtained here (0.7951) is only 0.0036, which is very small. Such a difference can easily arise from random weight initialization, stochastic mini-batch sampling, or other sources of training variability. Consequently, there is no contradiction between the two experiments. Overall, the findings suggest that adaptive optimizers consistently provide strong performance on this dataset, while the choice of loss function and data preprocessing may have a comparable or even greater impact on the final predictive accuracy.

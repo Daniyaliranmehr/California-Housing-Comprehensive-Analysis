@@ -298,4 +298,3 @@ def plot_training_history(history, name, figsize=(10, 5)):
 
     plt.savefig(f"../assets/{name}_learning_curves.png", dpi=300, bbox_inches='tight')
     plt.show()
-    
