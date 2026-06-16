@@ -5,7 +5,35 @@ This project presents an end-to-end experimental analysis of the California Hous
 
 ## Project Structure
 
-...
+heart-failure-risk-prediction/
+├─ assets/
+│  ├─ PNG Files
+├─ dataset
+│  ├─ data.zip
+│  ├─ housing.csv
+├─ notebooks
+│  ├─ 01_data_preparation.ipynb
+│  ├─ 02_loss_functions.ipynb
+│  ├─ 03_optimizers.ipynb
+│  ├─ 04_test.ipynb
+├─ saved_values
+│  ├─ data.pt
+│  ├─ MSE_best_model.pth
+│  ├─ MAE_best_model.pth
+│  ├─ Huber_best_model.pth
+│  ├─ Adaptive_Quadratic_best_model.pth
+│  ├─ Adaptive_Cauchy_best_model.pth
+│  ├─ Adaptive_Welsch_best_model.pth
+│  ├─ Adaptive_Charbonnier_best_model.pth
+│  ├─ Adaptive_Geman_McClure_best_model.pth
+│  ├─ Log-Cosh_best_model.pth
+│  ├─ AdamW_best_model.pth
+│  ├─ SGD1e-3_best_model.pth
+│  ├─ SGD_M_best_model.pth
+│  ├─ SGD_N_best_model.pth
+│  ├─ RMSprop_best_model.pth
+│  ├─ Adam_best_model.pth
+
 
 ## File Descriptions
 
