@@ -252,6 +252,27 @@ class Trainer:
 
             "best_valid_loss": best_valid_loss,
             "best_loss_epoch": best_loss_epoch}
+    
+
+class Evaluator:
+    def __init__(self, model, loss_fn=None):
+        self.model = model
+        self.loss_fn = loss_fn
+        self.r2_metric = R2Score()
+
+    def test(self, x_test, y_test):
+        self.model.eval()
+
+        with torch.no_grad():
+            y_pred = self.model(x_test)
+
+        r2 = self.r2_metric(y_pred, y_test).item()
+        results = {"R2": r2}
+
+        if self.loss_fn is not None:
+            results["Loss"] = self.loss_fn(y_pred, y_test).item()
+
+        return results
 
 
 def plot_training_history(history, name, figsize=(10, 5)):

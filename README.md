@@ -1724,3 +1724,15 @@ On the other hand, SGD-based methods showed lower performance. SGD with Momentum
 It is important to note that all experiments in this section were conducted using the same learning rate of 0.001 to ensure a fair comparison among the optimizers. While this setting is commonly used for adaptive optimizers such as Adam, AdamW, and RMSprop, it is often suboptimal for SGD-based methods. In preliminary experiments, SGD achieved considerably better performance when a larger learning rate was used. Therefore, the results reported here should be interpreted as a comparison under a common training configuration rather than the best achievable performance of each optimizer.
 
 In the previous notebook, the best result reached an $R^2$ score of 0.7987 using MAE loss with Adam. The difference between that score and the best optimizer result obtained here (0.7951) is only 0.0036, which is very small. Such a difference can easily arise from random weight initialization, stochastic mini-batch sampling, or other sources of training variability. Consequently, there is no contradiction between the two experiments. Overall, the findings suggest that adaptive optimizers consistently provide strong performance on this dataset, while the choice of loss function and data preprocessing may have a comparable or even greater impact on the final predictive accuracy.
+
+---
+
+## Evaluation
+
+In this section, the best model (`AdamW_best_model.pth`), trained with the MAE loss function and the AdamW optimizer, is used to make predictions on the test set and evaluate its final performance.
+
+| $R^2$ | Loss       |
+|:------:|:---------:|
+| 0.8057    | 0.2897       |
+
+The model achieves a strong generalization performance with an R² of 0.8057 on the test set, indicating that it effectively captures the underlying patterns of the California Housing dataset with stable and low prediction error.
