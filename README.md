@@ -964,15 +964,17 @@ This section includes the following subsections:
 
 - **Explore Optimization**
 
-    1. Adam
+    1. AdamW
 
-    2. SGD
+    2. Adam
 
-    3. SGD with Momentum
+    3. SGD
 
-    4. SGD with Nesterov
+    4. SGD with Momentum
 
-    5. Rmsprop
+    5. SGD with Nesterov
+
+    6. Rmsprop
 
 ---
 
