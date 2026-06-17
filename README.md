@@ -5,6 +5,7 @@ This project presents an end-to-end experimental analysis of the California Hous
 
 ## Project Structure
 
+```text
 heart-failure-risk-prediction/
 ├─ assets/
 │  ├─ PNG Files
@@ -33,7 +34,7 @@ heart-failure-risk-prediction/
 │  ├─ SGD_N_best_model.pth
 │  ├─ RMSprop_best_model.pth
 │  ├─ Adam_best_model.pth
-
+```
 
 ## File Descriptions
 
