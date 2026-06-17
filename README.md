@@ -9,15 +9,15 @@ This project presents an end-to-end experimental analysis of the California Hous
 heart-failure-risk-prediction/
 ├─ assets/
 │  ├─ PNG Files
-├─ dataset
+├─ dataset/
 │  ├─ data.zip
 │  ├─ housing.csv
-├─ notebooks
+├─ notebooks/
 │  ├─ 01_data_preparation.ipynb
 │  ├─ 02_loss_functions.ipynb
 │  ├─ 03_optimizers.ipynb
 │  ├─ 04_test.ipynb
-├─ saved_values
+├─ saved_values/
 │  ├─ data.pt
 │  ├─ MSE_best_model.pth
 │  ├─ MAE_best_model.pth
@@ -34,6 +34,11 @@ heart-failure-risk-prediction/
 │  ├─ SGD_N_best_model.pth
 │  ├─ RMSprop_best_model.pth
 │  ├─ Adam_best_model.pth
+├─ src/
+│  ├─ data_utils.py
+│  ├─ training_utils.py
+├─ .gitignore
+├─ README.md
 ```
 
 ## File Descriptions
