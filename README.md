@@ -1,7 +1,17 @@
 # A Comprehensive Analysis on California Housing Dataset 
 
-## Overview
-This project presents an end-to-end experimental analysis of the California Housing dataset. The primary objective is to perform an exhaustive exploratory data analysis (EDA) to understand the underlying patterns and statistical properties of the data. Following the preprocessing stage, the project focuses on designing and training various multilayer perceptron (MLP) architectures, systematically evaluating their performance using different loss functions and optimization algorithms to determine the most effective configuration for predictive modeling.
+## Project Overview
+
+This project presents a comprehensive data science and deep learning analysis of the California Housing dataset. The primary objective is to predict median house values using a fully connected neural network implemented from scratch in PyTorch while systematically investigating how different data preparation techniques, loss functions, and optimization algorithms affect model performance.
+
+The project begins with an extensive data analysis and preparation phase. This includes exploratory data analysis (EDA), feature distribution analysis, skewness reduction, outlier detection and mitigation, feature engineering, feature transformation, and data standardization. The goal of this stage is not only to prepare the data for training but also to better understand the characteristics and challenges of the dataset.
+
+Beyond data preparation, the project investigates several important aspects of deep learning for tabular regression problems. Multiple regression loss functions are implemented and compared, including MSE, MAE, Huber, Log-Cosh, and several adaptive robust losses such as Welsch, Geman-McClure, Cauchy, and Charbonnier. In addition, different optimization algorithms, including SGD, SGD with Momentum, SGD with Nesterov Momentum, RMSprop, Adam, and AdamW, are evaluated and compared. For each experiment, both the loss value and the $R^2$ score are monitored and analyzed to assess convergence behavior, robustness to outliers, and overall predictive performance.
+
+Special attention is given to the relationship between data characteristics and model behavior. The experiments analyze how skewed distributions, outliers, robust loss functions, and different optimization strategies influence training stability, convergence speed, and generalization performance.
+
+This project was developed for educational and research purposes and serves as a practical exploration of data science, neural network regression, robust loss functions, and optimization techniques for real-world tabular datasets.
+
 
 ## Project Structure
 
