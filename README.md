@@ -938,29 +938,7 @@ Where:
 - $\sigma$: standard deviation of the training set  
 - $z$: standardized value
 
----
 
-## Training Models with Different Loss Functions
-
-I explore the effect of different loss functions on training regression models. Choosing the right loss helps improve convergence, stability, and accuracy. This comparison highlights which loss works best for this task.
-
-The source codes of this section are availabel in `02_loss_functions.ipynb`, and the reusable modules are organized in `training_utils.py`.
-
-This section includes the following subsections:
-
-- **Explore Loss Functions**
-
-    1. MSE
-
-    2. MAE
-
-    3. Huber
-
-    4. Log-Cosh
-
-    5. Adaptive
-
-    6. Comparison and Analysis
 
 - **Explore Optimization**
 
@@ -976,12 +954,29 @@ This section includes the following subsections:
 
     6. Rmsprop
 
----
+
 
 ## Explore Loss Functions
+
 In this section, different loss functions are implemented to evaluate their impact on model behavior. Finally, the R² score for each loss function is compared in a summary table.
 
-The optimizer for all models is Adam.
+The source codes of this section are availabel in `02_loss_functions.ipynb`, and the reusable modules are organized in `training_utils.py`. The optimizer for all models is Adam.
+
+This section includes the following subsections:
+
+1. MSE
+
+2. MAE
+
+3. Huber
+
+4. Log-Cosh
+
+5. Adaptive
+
+6. Comparison and Analysis
+
+---
 
 ### 1. Mean Squared Error (MSE)
 $$
@@ -1462,7 +1457,22 @@ Overall, the experimental results indicate that robust loss functions consistent
 
 In this section, different optimizers are implemented to evaluate their impact on model behavior. Finally, the R² score for each optimizer is compared in a summary table.
 
-Given that the MAE loss function demonstrated the best performance in `02_loss_functions.ipynb`, it was adopted as the loss function for the optimizer experiment.
+Given that the MAE loss function demonstrated the best performance in `02_loss_functions.ipynb`, it was adopted as the loss function for the optimizer experiment. The loss function for all models is MAE.
+
+This section includes the following subsections:
+
+1. Adam
+
+2. AdamW
+
+3. SGD
+
+4. SGD with Momentum
+
+5. SGD with Nesterov
+
+6. Comparison and Analysis
+
 
 ### 1. Adam
 
