@@ -138,7 +138,6 @@ It includes multiple geographic and housing features that can help predict media
 | `households` | Total number of households in the district |
 | `median_income` | Median household income in the district |
 | `ocean_proximity` | Proximity of the district to the ocean |
-| `median_house_value` | Median house value in the district (target variable) |
 
 ### Target Variable
 
