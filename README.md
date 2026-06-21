@@ -910,7 +910,7 @@ While raw population and household counts offer almost negligible linear signals
 
 ### 4.  Encoding
 
-Machine learning models require numerical input features and cannot directly process categorical text values. The California Housing dataset contains one categorical feature, `ocean_proximity`, which describes the location of a district relative to the ocean.
+Deep learning models require numerical input features and cannot directly process categorical text values. The California Housing dataset contains one categorical feature, `ocean_proximity`, which describes the location of a district relative to the ocean.
 
 To convert this feature into a machine-readable format, **One-Hot Encoding** was applied. This technique creates a separate binary column for each category, allowing the model to learn location-specific patterns without introducing any artificial ordering between categories.
 
