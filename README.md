@@ -929,7 +929,7 @@ Feature scaling is applied to ensure that all numerical features contribute equa
 
 The dataset is split into:
 
-- **Train set:** 70%
+- **Training set:** 70%
 - **Validation set:** 20%
 - **Test set:** 10%
 
@@ -946,22 +946,6 @@ Where:
 - $\mu$: mean of the training set  
 - $\sigma$: standard deviation of the training set  
 - $z$: standardized value
-
-
-
-- **Explore Optimization**
-
-    1. AdamW
-
-    2. Adam
-
-    3. SGD
-
-    4. SGD with Momentum
-
-    5. SGD with Nesterov
-
-    6. Rmsprop
 
 
 
