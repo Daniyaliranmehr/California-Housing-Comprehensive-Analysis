@@ -871,7 +871,7 @@ The engineered and transformed ratio outperforms the original raw count, offerin
 > The combination of outlier capping and log transformation on `rooms_per_household` is structurally vital. It corrects severe skewness, bounds extreme non-residential outliers, and improves the linear signal over the baseline raw feature. The transformed feature will be officially integrated into the deep learning preprocessing pipeline.
 
 
-### 7. Population Per Household
+### 3. Population Per Household
 
 Apply 99th percentile outlier capping and logarithmic transformation to handle heavy right-skewness and stabilize spatial density variance.
 
