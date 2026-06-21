@@ -1772,7 +1772,6 @@ It is important to note that all experiments in this section were conducted usin
 
 In the previous notebook, the best result reached an $R^2$ score of 0.7987 using MAE loss with Adam. The difference between that score and the best optimizer result obtained here (0.7951) is only 0.0036, which is very small. Such a difference can easily arise from random weight initialization, stochastic mini-batch sampling, or other sources of training variability. Consequently, there is no contradiction between the two experiments. Overall, the findings suggest that adaptive optimizers consistently provide strong performance on this dataset, while the choice of loss function and data preprocessing may have a comparable or even greater impact on the final predictive accuracy.
 
----
 
 ## Evaluation
 
