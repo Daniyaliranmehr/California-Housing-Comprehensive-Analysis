@@ -1788,6 +1788,12 @@ The model achieves a strong generalization performance with an R² of 0.8057 on 
 
 Although the neural network achieved strong predictive performance on the California Housing dataset, it may not be the optimal model for this type of tabular data. Tree-based machine learning algorithms such as Random Forest, XGBoost, LightGBM, and CatBoost often outperform neural networks on structured datasets because they can naturally capture complex feature interactions, handle non-linear relationships, and are generally less sensitive to feature scaling and preprocessing. Exploring and comparing these models would be a valuable direction for future work and could potentially lead to improved predictive performance.
 
-> I welcome collaborations and contributions to further improve this project through the exploration of new models and techniques.
->
-> You can reach out via email or LinkedIn to discuss potential improvements and future developments.
+🤝 I welcome collaborations and contributions to further improve this project through the exploration of new models and techniques.
+
+📜 I am also open to collaborating on a potential survey paper based on this work. 
+
+You can reach out via email or LinkedIn to discuss improvements, research ideas, and future developments.
+
+- Gmail: daniyaliranmehr@gmial.com
+
+- LinkedIn: [daniyaliranmehr](https://www.linkedin.com/in/daniyaliranmehr/)
