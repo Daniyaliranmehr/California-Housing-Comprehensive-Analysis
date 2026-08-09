@@ -1582,13 +1582,7 @@ Consequently, the validation loss and $R^2$ score do not deteriorate but rather 
 ### 3. SGD (Stochastic Gradient Descent)
 
 $$
-\theta_{t+1}
-=
-\theta_t
--
-\eta
-\nabla_{\theta}
-\mathcal{L}_i(\theta_t)
+\theta_{t+1} = \theta_t - \eta \nabla_{\theta} \mathcal{L}_i(\theta_t)
 $$
 
 #### Effect of Learning Rate on SGD
